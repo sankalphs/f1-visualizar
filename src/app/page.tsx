@@ -36,7 +36,7 @@ export default function DashboardPage() {
     queryFn: () => f1Api.position.list({ session_key: sessionKey }),
   });
 
-  const { data: weather = [] } = useQuery({
+  const { data: weather = [], isLoading: weatherLoading } = useQuery({
     queryKey: ["weather", sessionKey],
     queryFn: () => f1Api.weather.bySession(sessionKey),
   });
@@ -167,14 +167,21 @@ export default function DashboardPage() {
         {/* Left Column */}
         <div className="lg:col-span-8 space-y-8">
           {/* Weather */}
-          {latestWeather && (
+          {weatherLoading ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Skeleton className="h-24" />
+              <Skeleton className="h-24" />
+              <Skeleton className="h-24" />
+              <Skeleton className="h-24" />
+            </div>
+          ) : latestWeather ? (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <WeatherCard label="TRACK TEMP" value={`${latestWeather.track_temperature}°C`} />
               <WeatherCard label="AIR TEMP" value={`${latestWeather.air_temperature}°C`} />
               <WeatherCard label="HUMIDITY" value={`${latestWeather.humidity}%`} />
               <WeatherCard label="WIND" value={`${latestWeather.wind_speed} km/h`} />
             </div>
-          )}
+          ) : null}
 
           {/* Best Laps Table */}
           <Card>

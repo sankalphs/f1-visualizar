@@ -11,6 +11,11 @@ export const metadata: Metadata = {
   title: "F1 VISUALIZER - Real-Time Formula 1 Data",
   description:
     "Real-time and historical Formula 1 data visualization powered by OpenF1 API",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+  },
 };
 
 export default function RootLayout({

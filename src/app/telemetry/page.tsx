@@ -228,8 +228,8 @@ function TelemetryChart({
           {unit && <span className="text-xs font-normal not-italic text-zinc-400">{unit}</span>}
         </h3>
       </div>
-      <div className={`${small ? "h-32" : "h-64"} telemetry-grid relative overflow-hidden border-b-2 border-zinc-700`}>
-        <ResponsiveContainer width="100%" height="100%">
+      <div className={`telemetry-grid relative overflow-hidden border-b-2 border-zinc-700`} style={{ height: small ? 128 : 256, width: "100%" }}>
+        <ResponsiveContainer width="100%" height="100%" minHeight={small ? 100 : 200}>
           {isStep ? (
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#333" />

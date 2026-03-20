@@ -4,7 +4,7 @@ import { useState, createContext, useContext, useCallback, useEffect } from "rea
 import { useQuery } from "@tanstack/react-query";
 import { f1Api } from "@/lib/api/f1";
 import type { Meeting, Session } from "@/lib/types/f1";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Loader2 } from "lucide-react";
 
 interface SessionContextType {
   meetingKey: number | string;
@@ -31,8 +31,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [sessionKey, setSessionKey] = useState<number | string>("latest");
 
   const { data: meetings = [] } = useQuery({
-    queryKey: ["meetings", 2025],
-    queryFn: () => f1Api.meetings.list({ year: 2025 }),
+    queryKey: ["meetings", 2026],
+    queryFn: () => f1Api.meetings.list({ year: 2026 }),
   });
 
   const { data: sessions = [], isLoading } = useQuery({
@@ -93,6 +93,7 @@ export function SessionSelector() {
     sessions,
     meeting,
     session,
+    isLoading,
   } = useSession();
 
   return (
@@ -101,9 +102,9 @@ export function SessionSelector() {
         <select
           value={String(meetingKey)}
           onChange={(e) => setMeetingKey(e.target.value)}
-          className="appearance-none border-2 border-nb-primary bg-nb-surface px-3 py-1.5 pr-7 text-xs font-headline font-bold uppercase text-nb-text focus:border-nb-blue focus:outline-none"
+          className="appearance-none border-2 border-nb-primary bg-nb-surface px-3 py-1.5 pr-7 text-xs font-headline font-bold uppercase text-nb-text focus:border-nb-blue focus:outline-none shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]"
         >
-          <option value="latest">Latest Meeting</option>
+          <option value="latest">LATEST MEETING</option>
           {meetings.map((m) => (
             <option key={m.meeting_key} value={m.meeting_key}>
               {m.meeting_name}
@@ -120,10 +121,10 @@ export function SessionSelector() {
         <select
           value={String(sessionKey)}
           onChange={(e) => setSessionKey(Number(e.target.value) || e.target.value)}
-          className="appearance-none border-2 border-nb-primary bg-nb-surface px-3 py-1.5 pr-7 text-xs font-headline font-bold uppercase text-nb-text focus:border-nb-blue focus:outline-none"
+          className="appearance-none border-2 border-nb-primary bg-nb-surface px-3 py-1.5 pr-7 text-xs font-headline font-bold uppercase text-nb-text focus:border-nb-blue focus:outline-none shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]"
         >
           {meetingKey === "latest" && (
-            <option value="latest">Latest Session</option>
+            <option value="latest">LATEST SESSION</option>
           )}
           {sessions.map((s) => (
             <option key={s.session_key} value={s.session_key}>
@@ -137,7 +138,14 @@ export function SessionSelector() {
         />
       </div>
 
-      {meeting && (
+      {isLoading && (
+        <div className="flex items-center gap-1.5 text-nb-yellow">
+          <Loader2 size={14} className="animate-spin" />
+          <span className="text-[10px] font-headline font-bold uppercase">Loading...</span>
+        </div>
+      )}
+
+      {meeting && !isLoading && (
         <div className="hidden lg:flex items-center gap-2 text-[10px] font-headline font-bold uppercase text-nb-text-muted">
           <img
             src={meeting.country_flag}
@@ -148,6 +156,14 @@ export function SessionSelector() {
           <span>
             {meeting.circuit_short_name} &middot; {meeting.location}
           </span>
+          {session && (
+            <span className="bg-nb-yellow text-nb-primary px-2 py-0.5 text-[9px] font-black">
+              {new Date(session.date_start).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              })}
+            </span>
+          )}
         </div>
       )}
     </div>

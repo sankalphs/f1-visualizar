@@ -208,8 +208,8 @@ export default function PositionHistoryPage() {
           <div className="bg-nb-primary text-white p-4 font-headline font-bold uppercase tracking-tighter">
             Position Over Session Duration
           </div>
-          <div className="h-[500px] w-full p-4">
-            <ResponsiveContainer width="100%" height="100%">
+          <div style={{ height: 500, width: "100%" }} className="p-4">
+            <ResponsiveContainer width="100%" height="100%" minHeight={400}>
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
                 <XAxis

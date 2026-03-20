@@ -14,13 +14,6 @@
   --color-nb-text-muted: #4a4a4a;
   --color-nb-border: #1a1a1a;
 
-  --color-dark-bg: #0a0a0a;
-  --color-dark-surface: #1a1a1a;
-  --color-dark-surface-dim: #27272a;
-  --color-dark-text: #f5f0e8;
-  --color-dark-text-muted: #a1a1aa;
-  --color-dark-border: #3f3f46;
-
   --font-headline: 'Space Grotesk', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
 }
@@ -36,7 +29,7 @@ body {
   font-family: var(--font-body);
 }
 
-/* --- NEO-BRUTALIST SHADOWS --- */
+/* --- NEO-BRUTALIST SHADOWS (light mode) --- */
 .neo-shadow {
   box-shadow: 4px 4px 0px 0px rgba(26, 26, 26, 1);
 }
@@ -62,7 +55,7 @@ body {
   background-size: 20px 20px;
 }
 
-/* --- SCROLLBAR --- */
+/* --- SCROLLBAR (light) --- */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -72,7 +65,6 @@ body {
 }
 ::-webkit-scrollbar-thumb {
   background: #1a1a1a;
-  border-radius: 0;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #4a4a4a;
@@ -114,54 +106,110 @@ select {
   );
 }
 
-/* --- DARK MODE OVERRIDES --- */
-.dark body,
-.dark main {
-  background: #0a0a0a;
-  color: #f5f0e8;
+/* ============================================================
+   DARK MODE — warm, colored Neo-Brutalist
+   Design tokens from DESIGN.md: high contrast but with color,
+   not raw black/white. Warm dark surface, yellow accents,
+   muted blues and reds instead of pure white text.
+   ============================================================ */
+
+/* Page-level backgrounds */
+html.dark body {
+  background: #121212;
+  color: #e8e3da;
+}
+html.dark main {
+  background: #121212;
+  color: #e8e3da;
 }
 
-.dark .bg-nb-bg {
-  background-color: #0a0a0a !important;
+/* Utility overrides — applied when .dark is on <html> */
+html.dark .bg-nb-bg {
+  background-color: #121212 !important;
 }
-.dark .bg-nb-surface {
-  background-color: #1a1a1a !important;
+html.dark .bg-nb-surface {
+  background-color: #1e1e1e !important;
 }
-.dark .bg-nb-surface-dim {
-  background-color: #27272a !important;
+html.dark .bg-nb-surface-dim {
+  background-color: #2a2a2a !important;
 }
-.dark .bg-nb-surface-dark {
-  background-color: #1f1f23 !important;
+html.dark .bg-nb-surface-dark {
+  background-color: #222222 !important;
 }
-.dark .border-nb-primary {
-  border-color: #3f3f46 !important;
+html.dark .border-nb-primary {
+  border-color: #4a4a4a !important;
 }
-.dark .text-nb-text {
-  color: #f5f0e8 !important;
+html.dark .text-nb-text {
+  color: #e8e3da !important;
 }
-.dark .text-nb-text-muted {
-  color: #a1a1aa !important;
+html.dark .text-nb-text-muted {
+  color: #9a9590 !important;
 }
-.dark .neo-shadow {
-  box-shadow: 4px 4px 0px 0px rgba(255, 204, 0, 0.3);
+
+/* Neo-shadows get yellow tint in dark mode */
+html.dark .neo-shadow {
+  box-shadow: 4px 4px 0px 0px rgba(255, 204, 0, 0.25);
 }
-.dark .neo-shadow-sm {
-  box-shadow: 2px 2px 0px 0px rgba(255, 204, 0, 0.2);
+html.dark .neo-shadow-sm {
+  box-shadow: 2px 2px 0px 0px rgba(255, 204, 0, 0.18);
 }
-.dark .neo-shadow-lg {
-  box-shadow: 8px 8px 0px 0px rgba(255, 204, 0, 0.3);
+html.dark .neo-shadow-lg {
+  box-shadow: 8px 8px 0px 0px rgba(255, 204, 0, 0.25);
 }
-.dark ::-webkit-scrollbar-track {
-  background: #1a1a1a;
+html.dark .neo-shadow-yellow {
+  box-shadow: 8px 8px 0px 0px rgba(255, 204, 0, 0.5);
 }
-.dark ::-webkit-scrollbar-thumb {
+html.dark .neo-shadow-blue {
+  box-shadow: 6px 6px 0px 0px rgba(0, 85, 255, 0.4);
+}
+html.dark .neo-shadow-red {
+  box-shadow: 6px 6px 0px 0px rgba(230, 59, 46, 0.4);
+}
+
+/* Override white-based surfaces in dark */
+html.dark .bg-white {
+  background-color: #1e1e1e !important;
+}
+
+/* Telemetry grid — lighter dots in dark */
+html.dark .telemetry-grid {
+  background-image: radial-gradient(circle, #444 1px, transparent 1px);
+}
+
+/* Stripes in dark — muted */
+html.dark .stripes-pattern {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 204, 0, 0.15),
+    rgba(255, 204, 0, 0.15) 10px,
+    rgba(255, 255, 255, 0.03) 10px,
+    rgba(255, 255, 255, 0.03) 20px
+  );
+}
+
+/* Scrollbar in dark */
+html.dark ::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+html.dark ::-webkit-scrollbar-thumb {
   background: #ffcc00;
 }
-
-.dark .bg-white {
-  background-color: #1a1a1a !important;
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #e6b800;
 }
 
-.dark .dark\:bg-nb-surface {
-  background-color: #1a1a1a !important;
+/* Loading skeleton in dark */
+html.dark .animate-pulse {
+  background-color: #2a2a2a !important;
+}
+
+/* Option backgrounds in dark selects */
+html.dark select {
+  background-color: #1e1e1e;
+  color: #e8e3da;
+  border-color: #4a4a4a;
+}
+html.dark select option {
+  background-color: #1e1e1e;
+  color: #e8e3da;
 }
