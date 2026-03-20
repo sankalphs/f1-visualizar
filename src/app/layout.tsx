@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/components/providers/QueryProvider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { SessionProvider } from "@/components/dashboard/SessionSelector";
 import { Sidebar } from "@/components/layout/Sidebar";
 
@@ -30,16 +31,19 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex bg-zinc-950 text-zinc-100">
-        <QueryProvider>
-          <SessionProvider>
-            <Sidebar />
-            <main className="ml-56 flex-1 min-h-screen">
-              <div className="mx-auto max-w-[1600px] p-6">{children}</div>
-            </main>
-          </SessionProvider>
-        </QueryProvider>
+        <ThemeProvider>
+          <QueryProvider>
+            <SessionProvider>
+              <Sidebar />
+              <main className="flex-1 min-h-screen md:ml-56">
+                <div className="mx-auto max-w-[1600px] p-4 md:p-6">{children}</div>
+              </main>
+            </SessionProvider>
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

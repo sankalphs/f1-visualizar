@@ -20,6 +20,122 @@ body {
   font-family: system-ui, -apple-system, sans-serif;
 }
 
+/* Light mode overrides */
+.light {
+  --background: #fafafa;
+  --foreground: #18181b;
+}
+
+.light body,
+.light main {
+  background: #fafafa;
+  color: #18181b;
+}
+
+.light .bg-zinc-950 {
+  background-color: #ffffff !important;
+}
+
+.light .bg-zinc-950\/50 {
+  background-color: #ffffff / 0.9 !important;
+}
+
+.light .bg-zinc-900 {
+  background-color: #f4f4f5 !important;
+}
+
+.light .bg-zinc-900\/50 {
+  background-color: #f4f4f5 / 0.7 !important;
+}
+
+.light .bg-zinc-900\/30 {
+  background-color: #f4f4f5 / 0.5 !important;
+}
+
+.light .bg-zinc-800 {
+  background-color: #e4e4e7 !important;
+}
+
+.light .bg-zinc-800\/50 {
+  background-color: #e4e4e7 / 0.7 !important;
+}
+
+.light .border-zinc-800 {
+  border-color: #d4d4d8 !important;
+}
+
+.light .border-zinc-800\/50 {
+  border-color: #d4d4d8 / 0.5 !important;
+}
+
+.light .border-zinc-700 {
+  border-color: #a1a1aa !important;
+}
+
+.light .text-zinc-100 {
+  color: #18181b !important;
+}
+
+.light .text-zinc-200 {
+  color: #27272a !important;
+}
+
+.light .text-zinc-300 {
+  color: #3f3f46 !important;
+}
+
+.light .text-zinc-400 {
+  color: #52525b !important;
+}
+
+.light .text-zinc-500 {
+  color: #71717a !important;
+}
+
+.light .text-zinc-600 {
+  color: #a1a1aa !important;
+}
+
+.light .hover\:bg-zinc-900\/50:hover {
+  background-color: #f4f4f5 / 0.5 !important;
+}
+
+.light .hover\:bg-zinc-800:hover {
+  background-color: #e4e4e7 !important;
+}
+
+.light .hover\:bg-zinc-700:hover {
+  background-color: #d4d4d8 !important;
+}
+
+.light .bg-zinc-900 option {
+  background-color: #f4f4f5;
+  color: #18181b;
+}
+
+.light select {
+  background-color: #f4f4f5;
+  color: #18181b;
+  border-color: #a1a1aa;
+}
+
+.light select option {
+  background-color: #f4f4f5;
+  color: #18181b;
+}
+
+.light .border-red-900\/30 {
+  border-color: #fca5a5 !important;
+}
+
+.light .from-red-950\/30 {
+  --tw-gradient-from: #fef2f2 !important;
+}
+
+.light .animate-pulse.bg-zinc-800\/50 {
+  background-color: #e4e4e7 !important;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -29,13 +145,25 @@ body {
   background: #18181b;
 }
 
+.light ::-webkit-scrollbar-track {
+  background: #f4f4f5;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #3f3f46;
   border-radius: 3px;
 }
 
+.light ::-webkit-scrollbar-thumb {
+  background: #a1a1aa;
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: #52525b;
+}
+
+.light ::-webkit-scrollbar-thumb:hover {
+  background: #71717a;
 }
 
 select {
