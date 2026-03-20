@@ -16,11 +16,14 @@ import {
   Trophy,
   Wrench,
   ShieldAlert,
+  Calendar,
+  MapPin,
+  Flag,
 } from "lucide-react";
 import { useMemo } from "react";
 
 export default function DashboardPage() {
-  const { sessionKey } = useSession();
+  const { sessionKey, meeting, session } = useSession();
 
   const { data: drivers = [], isLoading: driversLoading } = useQuery({
     queryKey: ["drivers", sessionKey],
@@ -126,6 +129,67 @@ export default function DashboardPage() {
         </div>
         <SessionSelector />
       </div>
+
+      {/* Race Event Banner */}
+      {(meeting || session) && (
+        <Card className="border-red-900/30 bg-gradient-to-r from-red-950/30 via-zinc-950/50 to-zinc-950/50">
+          <div className="flex flex-wrap items-center gap-6">
+            {meeting && (
+              <div className="flex items-center gap-3">
+                <img
+                  src={meeting.country_flag || ""}
+                  alt={meeting.country_name || ""}
+                  className="h-8 w-12 rounded object-cover shadow-md"
+                  onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
+                />
+                <div>
+                  <h2 className="text-lg font-bold text-zinc-100">
+                    {meeting.meeting_name}
+                  </h2>
+                  <div className="flex items-center gap-2 text-xs text-zinc-400">
+                    <MapPin size={11} />
+                    <span>{meeting.circuit_short_name} &middot; {meeting.location}, {meeting.country_name}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {session && (
+              <div className="flex items-center gap-4 rounded-lg bg-zinc-900/50 px-4 py-2">
+                <div className="flex items-center gap-2">
+                  <Flag size={14} className="text-red-400" />
+                  <span className="text-sm font-semibold text-zinc-200">
+                    {session.session_name}
+                  </span>
+                  <Badge variant={session.session_type === "Race" ? "danger" : session.session_type === "Qualifying" ? "warning" : "default"}>
+                    {session.session_type}
+                  </Badge>
+                </div>
+                <div className="flex items-center gap-1.5 text-sm text-zinc-400">
+                  <Calendar size={13} />
+                  <span>
+                    {new Date(session.date_start).toLocaleDateString("en-US", {
+                      weekday: "short",
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 text-sm text-zinc-500">
+                  <Clock size={13} />
+                  <span>
+                    {new Date(session.date_start).toLocaleTimeString("en-US", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        </Card>
+      )}
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">

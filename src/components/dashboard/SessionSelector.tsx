@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, createContext, useContext, useCallback } from "react";
+import { useState, createContext, useContext, useCallback, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { f1Api } from "@/lib/api/f1";
 import type { Meeting, Session } from "@/lib/types/f1";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Calendar } from "lucide-react";
 
 interface SessionContextType {
   meetingKey: number | string;
@@ -49,6 +49,18 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     setSessionKey("latest");
   }, []);
 
+  useEffect(() => {
+    if (meetingKey !== "latest" && sessions.length > 0) {
+      const currentSessionExists = sessions.some(
+        (s) => s.session_key === sessionKey
+      );
+      if (sessionKey === "latest" || !currentSessionExists) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setSessionKey(sessions[0].session_key);
+      }
+    }
+  }, [meetingKey, sessions, sessionKey]);
+
   const meeting = meetings.find((m) => m.meeting_key === meetingKey);
   const session = sessions.find((s) => s.session_key === sessionKey);
 
@@ -80,7 +92,25 @@ export function SessionSelector() {
     meetings,
     sessions,
     meeting,
+    session,
   } = useSession();
+
+  const raceDate = session
+    ? new Date(session.date_start).toLocaleDateString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
+    : null;
+
+  const raceTime = session
+    ? new Date(session.date_start).toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZoneName: "short",
+      })
+    : null;
 
   return (
     <div className="flex flex-wrap items-center gap-3">
@@ -109,7 +139,9 @@ export function SessionSelector() {
           onChange={(e) => setSessionKey(Number(e.target.value) || e.target.value)}
           className="appearance-none rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 pr-8 text-sm text-zinc-200 focus:border-red-500 focus:outline-none"
         >
-          <option value="latest">Latest Session</option>
+          {meetingKey === "latest" && (
+            <option value="latest">Latest Session</option>
+          )}
           {sessions.map((s) => (
             <option key={s.session_key} value={s.session_key}>
               {s.session_name} - {s.country_name}
@@ -134,6 +166,15 @@ export function SessionSelector() {
             {meeting.circuit_short_name} &middot; {meeting.location},{" "}
             {meeting.country_name}
           </span>
+        </div>
+      )}
+
+      {raceDate && session && (
+        <div className="flex items-center gap-1.5 text-xs text-zinc-400">
+          <Calendar size={12} className="text-red-400" />
+          <span className="font-medium text-zinc-300">{session.session_name}</span>
+          <span>{raceDate}</span>
+          {raceTime && <span className="text-zinc-500">{raceTime}</span>}
         </div>
       )}
     </div>
