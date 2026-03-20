@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { f1Api } from "@/lib/api/f1";
 import { useSession } from "@/components/dashboard/SessionSelector";
 import { SessionSelector } from "@/components/dashboard/SessionSelector";
-import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { formatLapTime } from "@/lib/utils";
 import { Layers } from "lucide-react";
@@ -171,28 +170,28 @@ export default function SectorsPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-100">
-            <Layers className="mr-2 inline" size={24} />
+          <span className="font-headline font-bold text-sm uppercase tracking-tighter text-nb-text-muted">
+            <Layers className="mr-2 inline" size={16} />
+            Telemetry
+          </span>
+          <h1 className="text-5xl md:text-7xl font-black font-headline uppercase tracking-tighter mt-2 leading-none text-nb-text">
             Sector Heatmap
           </h1>
-          <p className="text-sm text-zinc-500">
-            Visual sector-by-sector time comparison across all laps
-          </p>
         </div>
         <SessionSelector />
       </div>
 
       {/* Controls */}
       <div className="flex flex-wrap items-center gap-3">
-        <div className="flex gap-1 rounded-lg border border-zinc-700 bg-zinc-900 p-1">
+        <div className="flex gap-1 border-4 border-nb-primary bg-nb-surface p-1">
           {sectors.map((s) => (
             <button
               key={s.key}
               onClick={() => setSelectedSector(s.key)}
-              className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+              className={`px-3 py-1.5 text-xs font-headline font-bold uppercase tracking-tighter transition-colors ${
                 selectedSector === s.key
-                  ? "bg-red-600 text-white"
-                  : "text-zinc-400 hover:text-zinc-200"
+                  ? "bg-nb-red text-white"
+                  : "text-nb-text hover:bg-nb-surface-dim"
               }`}
             >
               {s.label}
@@ -205,7 +204,7 @@ export default function SectorsPage() {
           onChange={(e) =>
             setSelectedDriver(e.target.value ? Number(e.target.value) : null)
           }
-          className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-200 focus:border-red-500 focus:outline-none"
+          className="border-2 border-nb-primary bg-nb-surface font-headline font-bold text-sm text-nb-text px-3 py-2 focus:outline-none focus:border-nb-red"
         >
           <option value="">All Drivers</option>
           {driverNumbers.map((dn) => (
@@ -218,17 +217,17 @@ export default function SectorsPage() {
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-4 text-xs text-zinc-500">
+      <div className="flex items-center gap-4 text-xs font-headline font-bold text-nb-text-muted uppercase tracking-tighter">
         <div className="flex items-center gap-1">
-          <div className="h-3 w-3 rounded-sm" style={{ backgroundColor: "rgba(39, 244, 210, 0.6)" }} />
+          <div className="h-3 w-3 border-2 border-nb-primary" style={{ backgroundColor: "rgba(39, 244, 210, 0.6)" }} />
           <span>Fast</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="h-3 w-3 rounded-sm" style={{ backgroundColor: "rgba(250, 204, 21, 0.5)" }} />
+          <div className="h-3 w-3 border-2 border-nb-primary" style={{ backgroundColor: "rgba(250, 204, 21, 0.5)" }} />
           <span>Medium</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="h-3 w-3 rounded-sm" style={{ backgroundColor: "rgba(239, 68, 68, 0.5)" }} />
+          <div className="h-3 w-3 border-2 border-nb-primary" style={{ backgroundColor: "rgba(239, 68, 68, 0.5)" }} />
           <span>Slow</span>
         </div>
       </div>
@@ -237,27 +236,25 @@ export default function SectorsPage() {
       {isLoading ? (
         <Skeleton className="h-[500px] w-full" />
       ) : filteredData.length > 0 ? (
-        <Card className="p-0 overflow-hidden">
-          <CardHeader className="px-4 pt-4">
-            <CardTitle>
-              Sector Times Heatmap ({selectedSector.toUpperCase()})
-              {selectedDriver
-                ? ` - ${driverMap.get(selectedDriver)?.name_acronym || `#${selectedDriver}`}`
-                : ""}
-            </CardTitle>
-          </CardHeader>
+        <div className="border-4 border-nb-primary bg-nb-surface neo-shadow overflow-hidden">
+          <div className="bg-nb-primary text-white p-4 font-headline font-bold uppercase tracking-tighter">
+            Sector Times Heatmap ({selectedSector.toUpperCase()})
+            {selectedDriver
+              ? ` - ${driverMap.get(selectedDriver)?.name_acronym || `#${selectedDriver}`}`
+              : ""}
+          </div>
           <div className="overflow-x-auto">
             <div className="min-w-max p-4">
-              <table className="text-xs border-collapse">
+              <table className="text-xs border-collapse font-headline">
                 <thead>
                   <tr>
-                    <th className="sticky left-0 z-10 bg-zinc-950 px-2 py-1 text-left font-medium text-zinc-500 min-w-[80px]">
+                    <th className="sticky left-0 z-10 bg-nb-primary text-white px-2 py-1 text-left font-bold uppercase tracking-tighter min-w-[80px] border-2 border-nb-primary">
                       Driver
                     </th>
                     {uniqueLaps.map((lap) => (
                       <th
                         key={lap}
-                        className="px-1 py-1 text-center font-medium text-zinc-500 min-w-[52px]"
+                        className="px-1 py-1 text-center font-bold text-nb-text-muted min-w-[52px] border-2 border-nb-primary"
                       >
                         L{lap}
                       </th>
@@ -269,13 +266,13 @@ export default function SectorsPage() {
                     const d = driverMap.get(dn);
                     return (
                       <tr key={dn}>
-                        <td className="sticky left-0 z-10 bg-zinc-950 px-2 py-0.5">
+                        <td className="sticky left-0 z-10 bg-nb-surface px-2 py-0.5 border-2 border-nb-primary">
                           <div className="flex items-center gap-1.5 whitespace-nowrap">
                             <span
-                              className="inline-block h-2 w-2 rounded-full flex-shrink-0"
+                              className="inline-block w-1 h-4 flex-shrink-0"
                               style={{ backgroundColor: `#${d?.team_colour || "888"}` }}
                             />
-                            <span className="font-medium text-zinc-300">
+                            <span className="font-bold text-nb-text">
                               {d?.name_acronym || `#${dn}`}
                             </span>
                           </div>
@@ -287,9 +284,9 @@ export default function SectorsPage() {
                             return (
                               <td
                                 key={`${dn}-${lap}`}
-                                className="px-0.5 py-0.5 text-center"
+                                className="px-0.5 py-0.5 text-center border-2 border-nb-primary"
                               >
-                                <div className="h-7 w-[52px] rounded bg-zinc-900/50 flex items-center justify-center text-zinc-600">
+                                <div className="h-7 w-[52px] bg-nb-surface-dim flex items-center justify-center text-nb-text-muted font-bold">
                                   -
                                 </div>
                               </td>
@@ -305,10 +302,10 @@ export default function SectorsPage() {
                           return (
                             <td
                               key={`${dn}-${lap}`}
-                              className="px-0.5 py-0.5 text-center"
+                              className="px-0.5 py-0.5 text-center border-2 border-nb-primary"
                             >
                               <div
-                                className={`h-7 w-[52px] rounded flex items-center justify-center font-mono text-[10px] font-semibold ${isBest ? "ring-1 ring-emerald-400" : ""}`}
+                                className={`h-7 w-[52px] flex items-center justify-center font-mono text-[10px] font-bold ${isBest ? "ring-2 ring-emerald-400" : ""}`}
                                 style={{
                                   backgroundColor: `rgba(${rgb}, 0.4)`,
                                   color: "#e4e4e7",
@@ -327,30 +324,30 @@ export default function SectorsPage() {
               </table>
             </div>
           </div>
-        </Card>
+        </div>
       ) : (
-        <Card className="p-8">
-          <p className="text-center text-zinc-500">
+        <div className="border-4 border-nb-primary bg-nb-surface neo-shadow p-8">
+          <p className="text-center font-headline font-bold text-nb-text-muted">
             No sector data available for this session
           </p>
-        </Card>
+        </div>
       )}
 
       {/* Best Sectors Table */}
       {bestSectors.size > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Best Sector Times</CardTitle>
-          </CardHeader>
+        <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+          <div className="bg-nb-primary text-white p-4 font-headline font-bold uppercase tracking-tighter">
+            Best Sector Times
+          </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm font-headline">
               <thead>
-                <tr className="border-b border-zinc-800 text-zinc-500">
-                  <th className="py-2 text-left font-medium">Driver</th>
-                  <th className="py-2 text-left font-medium">Best S1</th>
-                  <th className="py-2 text-left font-medium">Best S2</th>
-                  <th className="py-2 text-left font-medium">Best S3</th>
-                  <th className="py-2 text-left font-medium">Best Total</th>
+                <tr className="border-b-4 border-nb-primary bg-nb-primary text-white">
+                  <th className="py-2 px-4 text-left font-bold uppercase tracking-tighter">Driver</th>
+                  <th className="py-2 px-4 text-left font-bold uppercase tracking-tighter">Best S1</th>
+                  <th className="py-2 px-4 text-left font-bold uppercase tracking-tighter">Best S2</th>
+                  <th className="py-2 px-4 text-left font-bold uppercase tracking-tighter">Best S3</th>
+                  <th className="py-2 px-4 text-left font-bold uppercase tracking-tighter">Best Total</th>
                 </tr>
               </thead>
               <tbody>
@@ -361,51 +358,51 @@ export default function SectorsPage() {
                     return (
                       <tr
                         key={dn}
-                        className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
+                        className="border-b-2 border-nb-primary hover:bg-nb-surface-dim"
                       >
-                        <td className="py-2.5 font-medium">
+                        <td className="py-2.5 px-4 font-bold">
                           <div className="flex items-center gap-2">
                             <span
-                              className="inline-block h-2.5 w-2.5 rounded-full"
+                              className="inline-block w-1 h-6"
                               style={{ backgroundColor: `#${d?.team_colour || "888"}` }}
                             />
                             {d?.name_acronym || `#${dn}`}
                           </div>
                         </td>
-                        <td className="py-2.5 font-mono">
+                        <td className="py-2.5 px-4 font-mono">
                           <span
                             className={
                               Math.abs(best.s1 - fastestSectors.s1) < 0.01
-                                ? "text-emerald-400 font-semibold"
-                                : "text-zinc-400"
+                                ? "text-emerald-400 font-bold"
+                                : "text-nb-text-muted"
                             }
                           >
                             {best.s1.toFixed(3)}
                           </span>
                         </td>
-                        <td className="py-2.5 font-mono">
+                        <td className="py-2.5 px-4 font-mono">
                           <span
                             className={
                               Math.abs(best.s2 - fastestSectors.s2) < 0.01
-                                ? "text-emerald-400 font-semibold"
-                                : "text-zinc-400"
+                                ? "text-emerald-400 font-bold"
+                                : "text-nb-text-muted"
                             }
                           >
                             {best.s2.toFixed(3)}
                           </span>
                         </td>
-                        <td className="py-2.5 font-mono">
+                        <td className="py-2.5 px-4 font-mono">
                           <span
                             className={
                               Math.abs(best.s3 - fastestSectors.s3) < 0.01
-                                ? "text-emerald-400 font-semibold"
-                                : "text-zinc-400"
+                                ? "text-emerald-400 font-bold"
+                                : "text-nb-text-muted"
                             }
                           >
                             {best.s3.toFixed(3)}
                           </span>
                         </td>
-                        <td className="py-2.5 font-mono font-semibold text-zinc-100">
+                        <td className="py-2.5 px-4 font-mono font-bold text-nb-text">
                           {formatLapTime(best.total)}
                         </td>
                       </tr>
@@ -414,7 +411,7 @@ export default function SectorsPage() {
               </tbody>
             </table>
           </div>
-        </Card>
+        </div>
       )}
     </div>
   );

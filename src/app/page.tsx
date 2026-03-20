@@ -2,25 +2,21 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { f1Api } from "@/lib/api/f1";
-import { SessionSelector, useSession } from "@/components/dashboard/SessionSelector";
+import { useSession } from "@/components/dashboard/SessionSelector";
 import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton, TableSkeleton } from "@/components/ui/Skeleton";
 import { formatLapTime, formatInterval } from "@/lib/utils";
 import {
-  Clock,
-  CloudSun,
   Timer,
   Users,
-  Gauge,
-  Trophy,
   Wrench,
   ShieldAlert,
-  Calendar,
+  TrendingUp,
   MapPin,
-  Flag,
 } from "lucide-react";
 import { useMemo } from "react";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const { sessionKey, meeting, session } = useSession();
@@ -40,22 +36,22 @@ export default function DashboardPage() {
     queryFn: () => f1Api.position.list({ session_key: sessionKey }),
   });
 
-  const { data: weather = [], isLoading: weatherLoading } = useQuery({
+  const { data: weather = [] } = useQuery({
     queryKey: ["weather", sessionKey],
     queryFn: () => f1Api.weather.bySession(sessionKey),
   });
 
-  const { data: pitStops = [], isLoading: pitLoading } = useQuery({
+  const { data: pitStops = [] } = useQuery({
     queryKey: ["pit", sessionKey],
     queryFn: () => f1Api.pit.bySession(sessionKey),
   });
 
-  const { data: raceControlEvents = [], isLoading: rcLoading } = useQuery({
+  const { data: raceControlEvents = [] } = useQuery({
     queryKey: ["race-control", sessionKey],
     queryFn: () => f1Api.raceControl.bySession(sessionKey),
   });
 
-  const { data: overtakes = [], isLoading: overtakesLoading } = useQuery({
+  const { data: overtakes = [] } = useQuery({
     queryKey: ["overtakes", sessionKey],
     queryFn: () => f1Api.overtakes.bySession(sessionKey),
   });
@@ -63,11 +59,6 @@ export default function DashboardPage() {
   const { data: intervals = [] } = useQuery({
     queryKey: ["intervals", sessionKey],
     queryFn: () => f1Api.intervals.bySession(sessionKey),
-  });
-
-  const { data: teamRadio = [] } = useQuery({
-    queryKey: ["team-radio", sessionKey],
-    queryFn: () => f1Api.teamRadio.list({ session_key: sessionKey }),
   });
 
   const latestWeather = weather.length > 0 ? weather[weather.length - 1] : null;
@@ -85,10 +76,7 @@ export default function DashboardPage() {
     for (const lap of laps) {
       if (lap.is_pit_out_lap || !lap.lap_duration) continue;
       const existing = map.get(lap.driver_number);
-      if (
-        !existing ||
-        (existing.lap_duration && lap.lap_duration < existing.lap_duration)
-      ) {
+      if (!existing || (existing.lap_duration && lap.lap_duration < existing.lap_duration)) {
         map.set(lap.driver_number, lap);
       }
     }
@@ -99,9 +87,7 @@ export default function DashboardPage() {
 
   const driverMap = useMemo(() => {
     const map = new Map<number, (typeof drivers)[0]>();
-    for (const d of drivers) {
-      map.set(d.driver_number, d);
-    }
+    for (const d of drivers) map.set(d.driver_number, d);
     return map;
   }, [drivers]);
 
@@ -117,446 +103,359 @@ export default function DashboardPage() {
   }, [positions]);
 
   const isLoading = driversLoading || lapsLoading || posLoading;
+  void isLoading;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-zinc-100">F1 Dashboard</h1>
-          <p className="text-sm text-zinc-500">
-            Real-time Formula 1 data visualization
-          </p>
-        </div>
-        <SessionSelector />
-      </div>
-
-      {/* Race Event Banner */}
+    <div className="space-y-8">
+      {/* Hero Banner */}
       {(meeting || session) && (
-        <Card className="border-red-900/30 bg-gradient-to-r from-red-950/30 via-zinc-950/50 to-zinc-950/50">
-          <div className="flex flex-wrap items-center gap-6">
-            {meeting && (
-              <div className="flex items-center gap-3">
-                <img
-                  src={meeting.country_flag || ""}
-                  alt={meeting.country_name || ""}
-                  className="h-8 w-12 rounded object-cover shadow-md"
-                  onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
-                />
-                <div>
-                  <h2 className="text-lg font-bold text-zinc-100">
-                    {meeting.meeting_name}
-                  </h2>
-                  <div className="flex items-center gap-2 text-xs text-zinc-400">
-                    <MapPin size={11} />
-                    <span>{meeting.circuit_short_name} &middot; {meeting.location}, {meeting.country_name}</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {session && (
-              <div className="flex items-center gap-4 rounded-lg bg-zinc-900/50 px-4 py-2">
-                <div className="flex items-center gap-2">
-                  <Flag size={14} className="text-red-400" />
-                  <span className="text-sm font-semibold text-zinc-200">
+        <section className="relative bg-nb-primary text-white p-6 lg:p-10 border-4 border-nb-primary neo-shadow-lg overflow-hidden">
+          <div className="relative z-10 flex flex-col md:flex-row justify-between items-end gap-6">
+            <div>
+              <h1 className="font-headline font-black text-4xl md:text-6xl lg:text-7xl leading-none tracking-tighter uppercase italic">
+                {meeting?.meeting_name?.replace(/ Grand Prix/i, "").split(" ").slice(-2).join(" ") || "F1 Dashboard"}
+                <br />
+                <span className="text-nb-yellow">GRAND PRIX</span>
+              </h1>
+              <div className="mt-4 flex flex-wrap gap-3 font-headline font-bold uppercase text-sm">
+                {meeting && (
+                  <span className="bg-nb-yellow text-nb-primary px-3 py-1">
+                    <MapPin size={12} className="inline mr-1" />
+                    {meeting.circuit_short_name}
+                  </span>
+                )}
+                {session && (
+                  <span className="bg-nb-red text-white px-3 py-1">
                     {session.session_name}
                   </span>
-                  <Badge variant={session.session_type === "Race" ? "danger" : session.session_type === "Qualifying" ? "warning" : "default"}>
-                    {session.session_type}
-                  </Badge>
-                </div>
-                <div className="flex items-center gap-1.5 text-sm text-zinc-400">
-                  <Calendar size={13} />
-                  <span>
-                    {new Date(session.date_start).toLocaleDateString("en-US", {
-                      weekday: "short",
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5 text-sm text-zinc-500">
-                  <Clock size={13} />
-                  <span>
-                    {new Date(session.date_start).toLocaleTimeString("en-US", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </div>
+                )}
+              </div>
+            </div>
+            {session && (
+              <div className="text-right border-l-4 border-nb-yellow pl-6 hidden md:block">
+                <p className="font-headline font-black text-xl">
+                  {new Date(session.date_start).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </p>
+                <p className="font-headline font-black text-3xl text-nb-yellow">
+                  {new Date(session.date_start).toLocaleTimeString("en-US", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
               </div>
             )}
           </div>
-        </Card>
+          <div className="absolute top-0 right-0 w-1/2 h-full opacity-15 pointer-events-none stripes-pattern" />
+        </section>
       )}
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
-        <QuickStat
-          icon={Users}
-          label="Drivers"
-          value={drivers.length}
-          loading={driversLoading}
-        />
-        <QuickStat
-          icon={Timer}
-          label="Laps Recorded"
-          value={laps.length}
-          loading={lapsLoading}
-        />
-        <QuickStat
-          icon={Wrench}
-          label="Pit Stops"
-          value={pitStops.length}
-          loading={pitLoading}
-        />
-        <QuickStat
-          icon={ShieldAlert}
-          label="RC Events"
-          value={raceControlEvents.length}
-          loading={rcLoading}
-        />
-        <QuickStat
-          icon={Gauge}
-          label="Overtakes"
-          value={overtakes.length}
-          loading={overtakesLoading}
-        />
-        <QuickStat
-          icon={Clock}
-          label="Radio Clips"
-          value={teamRadio.length}
-          loading={isLoading}
-        />
+      {/* Quick Stats Row */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <StatCard label="DRIVERS" value={drivers.length} loading={driversLoading} />
+        <StatCard label="LAPS" value={laps.length} loading={lapsLoading} icon={<Timer size={14} />} />
+        <StatCard label="PIT STOPS" value={pitStops.length} icon={<Wrench size={14} />} />
+        <StatCard label="RC EVENTS" value={raceControlEvents.length} icon={<ShieldAlert size={14} />} />
+        <StatCard label="OVERTAKES" value={overtakes.length} icon={<TrendingUp size={14} />} />
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Current Standings */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>
-              <span className="flex items-center gap-2">
-                <Trophy size={14} className="text-yellow-500" />
-                Current Positions
-              </span>
-            </CardTitle>
-          </CardHeader>
-          {posLoading ? (
-            <TableSkeleton rows={10} cols={4} />
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-zinc-800 text-zinc-500">
-                    <th className="py-2 text-left font-medium">Pos</th>
-                    <th className="py-2 text-left font-medium">Driver</th>
-                    <th className="py-2 text-left font-medium">Team</th>
-                    <th className="py-2 text-left font-medium">Gap</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {latestPositions.map((pos) => {
-                    const driver = driverMap.get(pos.driver_number);
-                    const interval = latestIntervals.find(
-                      (i) => i.driver_number === pos.driver_number
-                    );
-                    return (
-                      <tr
-                        key={pos.driver_number}
-                        className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
-                      >
-                        <td className="py-2.5">
-                          <Badge
-                            variant={pos.position <= 3 ? "success" : "default"}
-                          >
-                            P{pos.position}
-                          </Badge>
-                        </td>
-                        <td className="py-2.5 font-medium">
-                          <div className="flex items-center gap-2">
-                            <span
-                              className="inline-block h-2.5 w-2.5 rounded-full"
-                              style={{
-                                backgroundColor: `#${driver?.team_colour || "888"}`,
-                              }}
-                            />
-                            <span className="text-zinc-100">
-                              {driver?.name_acronym || `#${pos.driver_number}`}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="py-2.5 text-zinc-400">
-                          {driver?.team_name || "Unknown"}
-                        </td>
-                        <td className="py-2.5 font-mono text-zinc-400">
-                          {interval
-                            ? formatInterval(interval.gap_to_leader)
-                            : pos.position === 1
-                              ? "Leader"
-                              : ""}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+      {/* Main Grid: 8/4 layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Left Column */}
+        <div className="lg:col-span-8 space-y-8">
+          {/* Weather */}
+          {latestWeather && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <WeatherCard label="TRACK TEMP" value={`${latestWeather.track_temperature}°C`} />
+              <WeatherCard label="AIR TEMP" value={`${latestWeather.air_temperature}°C`} />
+              <WeatherCard label="HUMIDITY" value={`${latestWeather.humidity}%`} />
+              <WeatherCard label="WIND" value={`${latestWeather.wind_speed} km/h`} />
             </div>
           )}
-        </Card>
 
-        {/* Weather */}
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              <span className="flex items-center gap-2">
-                <CloudSun size={14} className="text-blue-400" />
-                Weather
-              </span>
-            </CardTitle>
-          </CardHeader>
-          {weatherLoading ? (
-            <Skeleton className="h-40 w-full" />
-          ) : latestWeather ? (
-            <div className="grid grid-cols-2 gap-3">
-              <WeatherItem
-                label="Track Temp"
-                value={`${latestWeather.track_temperature}°C`}
-              />
-              <WeatherItem
-                label="Air Temp"
-                value={`${latestWeather.air_temperature}°C`}
-              />
-              <WeatherItem
-                label="Humidity"
-                value={`${latestWeather.humidity}%`}
-              />
-              <WeatherItem
-                label="Wind"
-                value={`${latestWeather.wind_speed} m/s`}
-              />
-              <WeatherItem
-                label="Pressure"
-                value={`${latestWeather.pressure} mbar`}
-              />
-              <WeatherItem
-                label="Rainfall"
-                value={latestWeather.rainfall ? "Yes" : "No"}
-              />
-            </div>
-          ) : (
-            <p className="text-sm text-zinc-500">No weather data available</p>
-          )}
-        </Card>
-      </div>
-
-      {/* Best Laps */}
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            <span className="flex items-center gap-2">
-              <Timer size={14} className="text-emerald-400" />
-              Best Lap Times
-            </span>
-          </CardTitle>
-        </CardHeader>
-        {lapsLoading ? (
-          <TableSkeleton rows={5} cols={5} />
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-zinc-800 text-zinc-500">
-                  <th className="py-2 text-left font-medium">Rank</th>
-                  <th className="py-2 text-left font-medium">Driver</th>
-                  <th className="py-2 text-left font-medium">Team</th>
-                  <th className="py-2 text-left font-medium">Best Lap</th>
-                  <th className="py-2 text-left font-medium">S1</th>
-                  <th className="py-2 text-left font-medium">S2</th>
-                  <th className="py-2 text-left font-medium">S3</th>
-                  <th className="py-2 text-left font-medium">Speed</th>
-                </tr>
-              </thead>
-              <tbody>
-                {bestLaps.map((lap, idx) => {
-                  const driver = driverMap.get(lap.driver_number);
-                  return (
-                    <tr
-                      key={lap.driver_number}
-                      className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
-                    >
-                      <td className="py-2.5">
-                        <Badge variant={idx === 0 ? "success" : "default"}>
-                          {idx + 1}
-                        </Badge>
-                      </td>
-                      <td className="py-2.5 font-medium">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className="inline-block h-2.5 w-2.5 rounded-full"
-                            style={{
-                              backgroundColor: `#${driver?.team_colour || "888"}`,
-                            }}
-                          />
-                          {driver?.name_acronym || `#${lap.driver_number}`}
-                        </div>
-                      </td>
-                      <td className="py-2.5 text-zinc-400">
-                        {driver?.team_name || "Unknown"}
-                      </td>
-                      <td className="py-2.5 font-mono font-semibold text-zinc-100">
-                        {formatLapTime(lap.lap_duration)}
-                      </td>
-                      <td className="py-2.5 font-mono text-zinc-400">
-                        {lap.duration_sector_1?.toFixed(3) ?? "--"}
-                      </td>
-                      <td className="py-2.5 font-mono text-zinc-400">
-                        {lap.duration_sector_2?.toFixed(3) ?? "--"}
-                      </td>
-                      <td className="py-2.5 font-mono text-zinc-400">
-                        {lap.duration_sector_3?.toFixed(3) ?? "--"}
-                      </td>
-                      <td className="py-2.5 font-mono text-zinc-400">
-                        {lap.st_speed ? `${lap.st_speed} km/h` : "--"}
-                      </td>
+          {/* Best Laps Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <span className="flex items-center gap-2">
+                  <Timer size={16} />
+                  TOP LAP TIMES
+                </span>
+              </CardTitle>
+              <Badge variant="yellow">LIVE</Badge>
+            </CardHeader>
+            {lapsLoading ? (
+              <TableSkeleton rows={5} cols={5} />
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-nb-surface-dim border-b-2 border-nb-primary font-headline font-black uppercase text-xs">
+                      <th className="p-3 border-r-2 border-nb-primary">POS</th>
+                      <th className="p-3 border-r-2 border-nb-primary">DRIVER</th>
+                      <th className="p-3 border-r-2 border-nb-primary">TEAM</th>
+                      <th className="p-3 border-r-2 border-nb-primary">LAP TIME</th>
+                      <th className="p-3 border-r-2 border-nb-primary">S1</th>
+                      <th className="p-3 border-r-2 border-nb-primary">S2</th>
+                      <th className="p-3">S3</th>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
+                  </thead>
+                  <tbody className="font-headline font-bold text-sm">
+                    {bestLaps.slice(0, 8).map((lap, idx) => {
+                      const driver = driverMap.get(lap.driver_number);
+                      return (
+                        <tr
+                          key={lap.driver_number}
+                          className="border-b-2 border-nb-primary hover:bg-nb-yellow/10 transition-colors"
+                        >
+                          <td className="p-3 border-r-2 border-nb-primary">
+                            <span className={`font-black ${idx === 0 ? "text-nb-red" : ""}`}>
+                              {idx + 1}
+                            </span>
+                          </td>
+                          <td className="p-3 border-r-2 border-nb-primary">
+                            <div className="flex items-center gap-2">
+                              <div
+                                className="w-1 h-6"
+                                style={{ backgroundColor: `#${driver?.team_colour || "888"}` }}
+                              />
+                              <span className="italic">
+                                {driver?.name_acronym || `#${lap.driver_number}`}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="p-3 border-r-2 border-nb-primary text-nb-text-muted text-xs">
+                            {driver?.team_name || "--"}
+                          </td>
+                          <td className="p-3 border-r-2 border-nb-primary font-black italic">
+                            {formatLapTime(lap.lap_duration)}
+                          </td>
+                          <td className="p-3 border-r-2 border-nb-primary text-nb-text-muted">
+                            {lap.duration_sector_1?.toFixed(3) ?? "--"}
+                          </td>
+                          <td className="p-3 border-r-2 border-nb-primary text-nb-text-muted">
+                            {lap.duration_sector_2?.toFixed(3) ?? "--"}
+                          </td>
+                          <td className="p-3 text-nb-text-muted">
+                            {lap.duration_sector_3?.toFixed(3) ?? "--"}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </Card>
 
-      {/* Race Control & Pit Stops */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              <span className="flex items-center gap-2">
-                <ShieldAlert size={14} className="text-amber-400" />
-                Recent Race Control
-              </span>
-            </CardTitle>
-          </CardHeader>
-          {rcLoading ? (
-            <Skeleton className="h-40 w-full" />
-          ) : raceControlEvents.length > 0 ? (
-            <div className="max-h-64 space-y-2 overflow-y-auto">
-              {raceControlEvents
-                .slice(-20)
-                .reverse()
-                .map((rc, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-start gap-2 rounded-lg border border-zinc-800/50 bg-zinc-900/30 p-2.5"
-                  >
-                    <div className="flex-1">
-                      <p className="text-xs text-zinc-300">{rc.message}</p>
-                      <p className="text-xs text-zinc-600">
-                        {rc.date ? new Date(rc.date).toLocaleTimeString() : "--"}
-                      </p>
+          {/* Current Positions */}
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <span className="flex items-center gap-2">
+                  <Users size={16} />
+                  CURRENT POSITIONS
+                </span>
+              </CardTitle>
+              <Link
+                href="/positions"
+                className="bg-white text-nb-primary font-headline font-black text-[10px] px-3 py-1 border border-white hover:bg-nb-yellow transition-colors uppercase"
+              >
+                TRACK MAP
+              </Link>
+            </CardHeader>
+            {posLoading ? (
+              <TableSkeleton rows={10} cols={4} />
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-nb-surface-dim border-b-2 border-nb-primary font-headline font-black uppercase text-xs">
+                      <th className="p-3 border-r-2 border-nb-primary">POS</th>
+                      <th className="p-3 border-r-2 border-nb-primary">DRIVER</th>
+                      <th className="p-3 border-r-2 border-nb-primary">TEAM</th>
+                      <th className="p-3">GAP</th>
+                    </tr>
+                  </thead>
+                  <tbody className="font-headline font-bold text-sm">
+                    {latestPositions.slice(0, 10).map((pos) => {
+                      const driver = driverMap.get(pos.driver_number);
+                      const interval = latestIntervals.find(
+                        (i) => i.driver_number === pos.driver_number
+                      );
+                      return (
+                        <tr
+                          key={pos.driver_number}
+                          className="border-b-2 border-nb-primary hover:bg-nb-yellow/10 transition-colors"
+                        >
+                          <td className="p-3 border-r-2 border-nb-primary">
+                            <span className={`font-black italic ${pos.position <= 3 ? "text-nb-red" : ""}`}>
+                              P{pos.position}
+                            </span>
+                          </td>
+                          <td className="p-3 border-r-2 border-nb-primary">
+                            <div className="flex items-center gap-2">
+                              <div
+                                className="w-1 h-6"
+                                style={{ backgroundColor: `#${driver?.team_colour || "888"}` }}
+                              />
+                              {driver?.name_acronym || `#${pos.driver_number}`}
+                            </div>
+                          </td>
+                          <td className="p-3 border-r-2 border-nb-primary text-nb-text-muted text-xs">
+                            {driver?.team_name || "--"}
+                          </td>
+                          <td className="p-3 font-mono text-xs">
+                            {interval
+                              ? formatInterval(interval.gap_to_leader)
+                              : pos.position === 1
+                                ? "LEADER"
+                                : ""}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </Card>
+        </div>
+
+        {/* Right Column */}
+        <div className="lg:col-span-4 space-y-8">
+          {/* Race Control */}
+          <Card className="flex flex-col">
+            <CardHeader className="bg-nb-red">
+              <CardTitle>
+                <span className="flex items-center gap-2">
+                  <ShieldAlert size={16} />
+                  RACE CONTROL
+                </span>
+              </CardTitle>
+            </CardHeader>
+            <div className="flex-1 p-4 space-y-3 max-h-80 overflow-y-auto">
+              {raceControlEvents.length > 0 ? (
+                raceControlEvents
+                  .slice(-15)
+                  .reverse()
+                  .map((rc, idx) => (
+                    <div
+                      key={idx}
+                      className="border-2 border-nb-primary p-3 flex gap-3"
+                    >
+                      <div className="font-headline font-black text-sm min-w-[50px]">
+                        {rc.lap_number ? `L${rc.lap_number}` : "--"}
+                      </div>
+                      <div className="font-body text-xs font-bold">
+                        <span className="block font-headline font-black uppercase text-[10px] text-nb-red">
+                          {rc.flag || rc.category}
+                        </span>
+                        {rc.message}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+              ) : (
+                <p className="text-sm text-nb-text-muted font-headline font-bold uppercase">
+                  No race control events
+                </p>
+              )}
             </div>
-          ) : (
-            <p className="text-sm text-zinc-500">No race control events</p>
-          )}
-        </Card>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              <span className="flex items-center gap-2">
-                <Wrench size={14} className="text-orange-400" />
-                Pit Stops
-              </span>
-            </CardTitle>
-          </CardHeader>
-          {pitLoading ? (
-            <Skeleton className="h-40 w-full" />
-          ) : pitStops.length > 0 ? (
-            <div className="max-h-64 overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-zinc-800 text-zinc-500">
-                    <th className="py-2 text-left font-medium">Driver</th>
-                    <th className="py-2 text-left font-medium">Lap</th>
-                    <th className="py-2 text-left font-medium">Lane</th>
-                    <th className="py-2 text-left font-medium">Stop</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pitStops.map((pit, idx) => {
-                    const driver = driverMap.get(pit.driver_number);
-                    return (
-                      <tr
-                        key={idx}
-                        className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
-                      >
-                        <td className="py-2.5 font-medium">
-                          {driver?.name_acronym || `#${pit.driver_number}`}
-                        </td>
-                        <td className="py-2.5">L{pit.lap_number}</td>
-                        <td className="py-2.5 font-mono text-zinc-400">
-                          {pit.lane_duration != null ? `${pit.lane_duration.toFixed(2)}s` : "--"}
-                        </td>
-                        <td className="py-2.5 font-mono text-zinc-400">
-                          {pit.stop_duration != null
-                            ? `${pit.stop_duration.toFixed(2)}s`
-                            : "N/A"}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+          {/* Pit Stops */}
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <span className="flex items-center gap-2">
+                  <Wrench size={16} />
+                  PIT STOPS
+                </span>
+              </CardTitle>
+            </CardHeader>
+            <div className="p-4 max-h-80 overflow-x-auto">
+              {pitStops.length > 0 ? (
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="border-b-2 border-nb-primary font-headline font-black uppercase">
+                      <th className="p-2">DRIVER</th>
+                      <th className="p-2">LAP</th>
+                      <th className="p-2">LANE</th>
+                      <th className="p-2 text-right">STOP</th>
+                    </tr>
+                  </thead>
+                  <tbody className="font-headline font-bold">
+                    {pitStops.map((pit, idx) => {
+                      const driver = driverMap.get(pit.driver_number);
+                      return (
+                        <tr
+                          key={idx}
+                          className="border-b border-nb-primary/30 hover:bg-nb-yellow/10"
+                        >
+                          <td className="p-2 italic">
+                            {driver?.name_acronym || `#${pit.driver_number}`}
+                          </td>
+                          <td className="p-2">L{pit.lap_number}</td>
+                          <td className="p-2 font-mono text-nb-text-muted">
+                            {pit.lane_duration != null ? `${pit.lane_duration.toFixed(2)}s` : "--"}
+                          </td>
+                          <td className="p-2 font-mono text-right text-nb-red font-black">
+                            {pit.stop_duration != null ? `${pit.stop_duration.toFixed(2)}s` : "N/A"}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              ) : (
+                <p className="text-sm text-nb-text-muted font-headline font-bold uppercase">
+                  No pit stops recorded
+                </p>
+              )}
             </div>
-          ) : (
-            <p className="text-sm text-zinc-500">No pit stops recorded</p>
-          )}
-        </Card>
+          </Card>
+        </div>
       </div>
     </div>
   );
 }
 
-function QuickStat({
-  icon: Icon,
+function StatCard({
   label,
   value,
   loading,
+  icon,
 }: {
-  icon: React.ComponentType<{ size?: number }>;
   label: string;
   value: number;
-  loading: boolean;
+  loading?: boolean;
+  icon?: React.ReactNode;
 }) {
   return (
-    <Card className="p-3">
-      <div className="flex items-center gap-3">
-        <div className="rounded-lg bg-zinc-800 p-2">
-          <Icon size={16} />
-        </div>
-        <div>
-          <p className="text-xs text-zinc-500">{label}</p>
-          {loading ? (
-            <Skeleton className="h-5 w-10" />
-          ) : (
-            <p className="text-lg font-bold text-zinc-100">{value}</p>
-          )}
-        </div>
-      </div>
-    </Card>
+    <div className="bg-nb-surface border-4 border-nb-primary p-4 neo-shadow-sm flex flex-col justify-between h-28">
+      <span className="text-[10px] font-black uppercase tracking-widest font-headline flex items-center gap-1">
+        {icon}
+        {label}
+      </span>
+      {loading ? (
+        <Skeleton className="h-8 w-12" />
+      ) : (
+        <span className="font-headline font-black text-3xl">{value}</span>
+      )}
+    </div>
   );
 }
 
-function WeatherItem({ label, value }: { label: string; value: string }) {
+function WeatherCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-zinc-900/50 p-3">
-      <p className="text-xs text-zinc-500">{label}</p>
-      <p className="text-sm font-semibold text-zinc-200">{value}</p>
+    <div className="bg-nb-surface border-4 border-nb-primary p-4 neo-shadow-sm flex flex-col justify-between h-24">
+      <span className="text-[10px] font-black uppercase tracking-widest font-headline text-nb-text-muted">
+        {label}
+      </span>
+      <span className="font-headline font-black text-2xl">{value}</span>
     </div>
   );
 }

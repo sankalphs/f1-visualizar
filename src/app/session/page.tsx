@@ -2,8 +2,6 @@
 
 import { useSession } from "@/components/dashboard/SessionSelector";
 import { SessionSelector } from "@/components/dashboard/SessionSelector";
-import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { formatDate } from "@/lib/utils";
 import { Calendar, MapPin, Clock, Flag } from "lucide-react";
 import { useMemo } from "react";
@@ -20,142 +18,142 @@ export default function SessionPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-100">
-            <Calendar className="mr-2 inline" size={24} />
-            Sessions & Meetings
+          <span className="font-headline font-black uppercase text-xs tracking-tighter text-nb-text-muted">
+            <Calendar className="mr-1 inline" size={14} />
+            Schedule
+          </span>
+          <h1 className="text-5xl md:text-7xl font-black font-headline uppercase tracking-tighter mt-2 leading-none text-nb-text">
+            Sessions
           </h1>
-          <p className="text-sm text-zinc-500">
-            Browse all F1 meetings and sessions
-          </p>
         </div>
         <SessionSelector />
       </div>
 
       {meeting && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Current Meeting</CardTitle>
-          </CardHeader>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            <div className="rounded-lg bg-zinc-900/50 p-4">
-              <div className="flex items-center gap-2 text-zinc-400">
+        <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+          <div className="bg-nb-primary text-white p-4">
+            <h2 className="font-headline font-black uppercase text-sm tracking-tighter">Current Meeting</h2>
+          </div>
+          <div className="grid grid-cols-2 gap-4 p-4 md:grid-cols-4">
+            <div className="border-2 border-nb-primary bg-nb-surface-dim p-4">
+              <div className="flex items-center gap-2 text-nb-text-muted">
                 <Flag size={14} />
-                <span className="text-xs">Event</span>
+                <span className="text-xs font-headline font-bold uppercase">Event</span>
               </div>
-              <p className="mt-1 text-sm font-semibold">{meeting.meeting_name}</p>
+              <p className="mt-1 text-sm font-headline font-black text-nb-text">{meeting.meeting_name}</p>
             </div>
-            <div className="rounded-lg bg-zinc-900/50 p-4">
-              <div className="flex items-center gap-2 text-zinc-400">
+            <div className="border-2 border-nb-primary bg-nb-surface-dim p-4">
+              <div className="flex items-center gap-2 text-nb-text-muted">
                 <MapPin size={14} />
-                <span className="text-xs">Circuit</span>
+                <span className="text-xs font-headline font-bold uppercase">Circuit</span>
               </div>
-              <p className="mt-1 text-sm font-semibold">{meeting.circuit_short_name}</p>
+              <p className="mt-1 text-sm font-headline font-black text-nb-text">{meeting.circuit_short_name}</p>
             </div>
-            <div className="rounded-lg bg-zinc-900/50 p-4">
-              <div className="flex items-center gap-2 text-zinc-400">
+            <div className="border-2 border-nb-primary bg-nb-surface-dim p-4">
+              <div className="flex items-center gap-2 text-nb-text-muted">
                 <Calendar size={14} />
-                <span className="text-xs">Location</span>
+                <span className="text-xs font-headline font-bold uppercase">Location</span>
               </div>
-              <p className="mt-1 text-sm font-semibold">{meeting.location}, {meeting.country_name}</p>
+              <p className="mt-1 text-sm font-headline font-black text-nb-text">{meeting.location}, {meeting.country_name}</p>
             </div>
-            <div className="rounded-lg bg-zinc-900/50 p-4">
-              <div className="flex items-center gap-2 text-zinc-400">
+            <div className="border-2 border-nb-primary bg-nb-surface-dim p-4">
+              <div className="flex items-center gap-2 text-nb-text-muted">
                 <Clock size={14} />
-                <span className="text-xs">Type</span>
+                <span className="text-xs font-headline font-bold uppercase">Type</span>
               </div>
-              <p className="mt-1 text-sm font-semibold">{meeting.circuit_type}</p>
+              <p className="mt-1 text-sm font-headline font-black text-nb-text">{meeting.circuit_type}</p>
             </div>
           </div>
           {meeting.circuit_image && (
-            <div className="mt-4 flex justify-center">
+            <div className="mt-2 flex justify-center pb-4">
               <img
                 src={meeting.circuit_image}
                 alt={meeting.circuit_short_name}
-                className="h-32 opacity-80"
+                className="h-32 opacity-80 border-2 border-nb-primary"
                 onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
               />
             </div>
           )}
-        </Card>
+        </div>
       )}
 
       {/* Sessions for current meeting */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Sessions</CardTitle>
-        </CardHeader>
+      <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+        <div className="bg-nb-primary text-white p-4">
+          <h2 className="font-headline font-black uppercase text-sm tracking-tighter">Sessions</h2>
+        </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm font-headline font-bold">
             <thead>
-              <tr className="border-b border-zinc-800 text-zinc-500">
-                <th className="py-2 text-left font-medium">Session</th>
-                <th className="py-2 text-left font-medium">Type</th>
-                <th className="py-2 text-left font-medium">Start</th>
-                <th className="py-2 text-left font-medium">End</th>
-                <th className="py-2 text-left font-medium">Circuit</th>
+              <tr className="bg-nb-primary text-white font-headline font-black uppercase text-xs">
+                <th className="py-2 px-3 text-left">Session</th>
+                <th className="py-2 px-3 text-left">Type</th>
+                <th className="py-2 px-3 text-left">Start</th>
+                <th className="py-2 px-3 text-left">End</th>
+                <th className="py-2 px-3 text-left">Circuit</th>
               </tr>
             </thead>
             <tbody>
               {sessions.map((s) => (
                 <tr
                   key={s.session_key}
-                  className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
+                  className="border-b-2 border-nb-primary hover:bg-nb-yellow/10"
                 >
-                  <td className="py-2.5 font-medium">{s.session_name}</td>
-                  <td className="py-2.5">
-                    <Badge variant={s.session_type === "Race" ? "danger" : "default"}>
+                  <td className="py-2.5 px-3 text-nb-text">{s.session_name}</td>
+                  <td className="py-2.5 px-3">
+                    <span className={`border-2 border-nb-primary font-headline font-black uppercase text-[10px] px-2 py-0.5 ${s.session_type === "Race" ? "bg-nb-red text-white" : "bg-nb-surface-dim text-nb-text"}`}>
                       {s.session_type}
-                    </Badge>
+                    </span>
                   </td>
-                  <td className="py-2.5 text-zinc-400">{formatDate(s.date_start)}</td>
-                  <td className="py-2.5 text-zinc-400">{formatDate(s.date_end)}</td>
-                  <td className="py-2.5 text-zinc-400">{s.circuit_short_name}</td>
+                  <td className="py-2.5 px-3 text-nb-text-muted">{formatDate(s.date_start)}</td>
+                  <td className="py-2.5 px-3 text-nb-text-muted">{formatDate(s.date_end)}</td>
+                  <td className="py-2.5 px-3 text-nb-text-muted">{s.circuit_short_name}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </Card>
+      </div>
 
       {/* All Meetings */}
-      <Card>
-        <CardHeader>
-          <CardTitle>All Meetings (2025)</CardTitle>
-        </CardHeader>
+      <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+        <div className="bg-nb-primary text-white p-4">
+          <h2 className="font-headline font-black uppercase text-sm tracking-tighter">All Meetings (2025)</h2>
+        </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm font-headline font-bold">
             <thead>
-              <tr className="border-b border-zinc-800 text-zinc-500">
-                <th className="py-2 text-left font-medium">#</th>
-                <th className="py-2 text-left font-medium">Meeting</th>
-                <th className="py-2 text-left font-medium">Location</th>
-                <th className="py-2 text-left font-medium">Circuit</th>
-                <th className="py-2 text-left font-medium">Date</th>
+              <tr className="bg-nb-primary text-white font-headline font-black uppercase text-xs">
+                <th className="py-2 px-3 text-left">#</th>
+                <th className="py-2 px-3 text-left">Meeting</th>
+                <th className="py-2 px-3 text-left">Location</th>
+                <th className="py-2 px-3 text-left">Circuit</th>
+                <th className="py-2 px-3 text-left">Date</th>
               </tr>
             </thead>
             <tbody>
               {sortedMeetings.map((m, idx) => (
                 <tr
                   key={m.meeting_key}
-                  className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
+                  className="border-b-2 border-nb-primary hover:bg-nb-yellow/10"
                 >
-                  <td className="py-2.5 text-zinc-500">{idx + 1}</td>
-                  <td className="py-2.5 font-medium">
+                  <td className="py-2.5 px-3 text-nb-text-muted">{idx + 1}</td>
+                  <td className="py-2.5 px-3">
                     <div className="flex items-center gap-2">
                       <img
                         src={m.country_flag || ""}
                         alt={m.country_name || ""}
-                        className="h-4 w-6 rounded object-cover"
+                        className="h-4 w-6 border border-nb-primary object-cover"
                         onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
                       />
                       {m.meeting_name}
                     </div>
                   </td>
-                  <td className="py-2.5 text-zinc-400">
+                  <td className="py-2.5 px-3 text-nb-text-muted">
                     {m.location}, {m.country_name}
                   </td>
-                  <td className="py-2.5 text-zinc-400">{m.circuit_short_name}</td>
-                  <td className="py-2.5 text-zinc-400">
+                  <td className="py-2.5 px-3 text-nb-text-muted">{m.circuit_short_name}</td>
+                  <td className="py-2.5 px-3 text-nb-text-muted">
                     {m.date_start ? new Date(m.date_start).toLocaleDateString() : "--"}
                   </td>
                 </tr>
@@ -163,7 +161,7 @@ export default function SessionPage() {
             </tbody>
           </table>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

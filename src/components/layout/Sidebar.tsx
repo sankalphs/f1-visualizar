@@ -16,16 +16,13 @@ import {
   ArrowLeftRight,
   MessageSquare,
   MapPin,
-  ChevronLeft,
-  ChevronRight,
-  Menu,
-  X,
   TrendingUp,
   Layers,
+  Menu,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -36,7 +33,7 @@ const navItems = [
   { href: "/sectors", label: "Sector Heatmap", icon: Layers },
   { href: "/strategy", label: "Strategy", icon: GitBranch },
   { href: "/standings", label: "Standings", icon: Trophy },
-  { href: "/session", label: "Session", icon: Trophy },
+  { href: "/session", label: "Sessions", icon: LayoutDashboard },
   { href: "/drivers", label: "Drivers", icon: Users },
   { href: "/intervals", label: "Intervals", icon: ArrowLeftRight },
   { href: "/pit", label: "Pit Stops", icon: Wrench },
@@ -48,17 +45,16 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const closeMobile = () => setMobileOpen(false);
 
   return (
     <>
-      {/* Mobile hamburger button */}
+      {/* Mobile hamburger */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="fixed left-4 top-4 z-50 flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-700 bg-zinc-900 text-zinc-400 shadow-lg md:hidden hover:bg-zinc-800 hover:text-zinc-200"
+        className="fixed left-4 top-20 z-50 flex h-10 w-10 items-center justify-center border-2 border-nb-primary bg-nb-surface text-nb-text shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] md:hidden hover:bg-nb-yellow transition-colors"
         aria-label="Open menu"
       >
         <Menu size={18} />
@@ -67,7 +63,7 @@ export function Sidebar() {
       {/* Mobile overlay */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
           onClick={closeMobile}
         />
       )}
@@ -75,78 +71,51 @@ export function Sidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-zinc-800 bg-zinc-950 transition-all duration-300 dark:bg-zinc-950",
-          // Mobile: slide in/out
+          "fixed left-0 top-0 z-40 h-screen w-64 bg-nb-bg border-r-4 border-nb-primary flex flex-col pt-[72px] pb-10 overflow-y-auto transition-transform duration-200",
           "md:translate-x-0",
-          mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
-          // Desktop: collapsed/expanded
-          collapsed ? "md:w-16" : "md:w-56",
-          // Mobile: always full-ish width
-          "w-64"
+          mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
-        <div className="flex items-center justify-between border-b border-zinc-800 p-4">
-          {(!collapsed || mobileOpen) && (
-            <Link href="/" className="flex items-center gap-2">
-              <span className="text-xl font-bold text-red-500">F1</span>
-              <span className="text-sm font-semibold text-zinc-200">Visualizer</span>
-            </Link>
-          )}
-
-          {/* Mobile close button */}
-          <button
-            onClick={closeMobile}
-            className="rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 md:hidden"
-          >
-            <X size={16} />
-          </button>
-
-          {/* Desktop collapse button */}
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className={cn(
-              "rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 hidden md:block",
-              !collapsed && !mobileOpen && ""
-            )}
-          >
-            {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-          </button>
+        {/* Header */}
+        <div className="px-4 mb-6">
+          <div className="text-xl font-black border-b-2 border-nb-primary mb-1 font-headline uppercase tracking-tight">
+            GRAND PRIX
+          </div>
+          <div className="text-[10px] font-bold uppercase tracking-widest text-nb-red">
+            LIVE TELEMETRY
+          </div>
         </div>
 
-        <nav className="flex-1 overflow-y-auto p-2">
-          <ul className="space-y-1">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    onClick={closeMobile}
-                    className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-red-600/20 text-red-400"
-                        : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200",
-                      collapsed && "md:justify-center md:px-2"
-                    )}
-                  >
-                    <item.icon size={18} />
-                    {(!collapsed || mobileOpen) && <span>{item.label}</span>}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+        {/* Nav links */}
+        <nav className="flex-1 flex flex-col font-headline font-bold text-sm uppercase">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={closeMobile}
+                className={cn(
+                  "p-3 mx-2 flex items-center gap-3 transition-all duration-100",
+                  isActive
+                    ? "bg-nb-yellow text-nb-primary border-2 border-nb-primary shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]"
+                    : "text-nb-text hover:bg-nb-blue hover:text-white hover:skew-x-1"
+                )}
+              >
+                <item.icon size={18} strokeWidth={isActive ? 2.5 : 2} />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
         </nav>
 
-        <div className="border-t border-zinc-800 p-3 flex items-center justify-between">
-          {(!collapsed || mobileOpen) && (
-            <p className="text-xs text-zinc-600">
-              Data from OpenF1 API
-            </p>
-          )}
-          <ThemeToggle />
-        </div>
+        {/* Mobile close */}
+        <button
+          onClick={closeMobile}
+          className="absolute top-[80px] right-3 rounded p-1.5 text-nb-text hover:bg-nb-primary hover:text-white md:hidden"
+        >
+          <X size={16} />
+        </button>
       </aside>
     </>
   );

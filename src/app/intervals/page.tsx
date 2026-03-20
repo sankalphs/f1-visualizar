@@ -4,8 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { f1Api } from "@/lib/api/f1";
 import { useSession } from "@/components/dashboard/SessionSelector";
 import { SessionSelector } from "@/components/dashboard/SessionSelector";
-import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { TableSkeleton } from "@/components/ui/Skeleton";
 import { formatInterval } from "@/lib/utils";
 import { ArrowLeftRight } from "lucide-react";
@@ -45,33 +43,33 @@ export default function IntervalsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-100">
-            <ArrowLeftRight className="mr-2 inline" size={24} />
+          <span className="font-headline font-black uppercase text-xs tracking-tighter text-nb-text-muted">
+            <ArrowLeftRight className="mr-1 inline" size={14} />
+            Timing
+          </span>
+          <h1 className="text-5xl md:text-7xl font-black font-headline uppercase tracking-tighter mt-2 leading-none text-nb-text">
             Intervals
           </h1>
-          <p className="text-sm text-zinc-500">
-            Real-time intervals between drivers and gap to leader
-          </p>
         </div>
         <SessionSelector />
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Current Intervals</CardTitle>
-        </CardHeader>
+      <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+        <div className="bg-nb-primary text-white p-4">
+          <h2 className="font-headline font-black uppercase text-sm tracking-tighter">Current Intervals</h2>
+        </div>
         {isLoading ? (
           <TableSkeleton rows={20} cols={5} />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm font-headline font-bold">
               <thead>
-                <tr className="border-b border-zinc-800 text-zinc-500">
-                  <th className="py-2 text-left font-medium">Driver</th>
-                  <th className="py-2 text-left font-medium">Team</th>
-                  <th className="py-2 text-left font-medium">Gap to Leader</th>
-                  <th className="py-2 text-left font-medium">Interval</th>
-                  <th className="py-2 text-left font-medium">Last Updated</th>
+                <tr className="bg-nb-primary text-white font-headline font-black uppercase text-xs">
+                  <th className="py-2 px-3 text-left">Driver</th>
+                  <th className="py-2 px-3 text-left">Team</th>
+                  <th className="py-2 px-3 text-left">Gap to Leader</th>
+                  <th className="py-2 px-3 text-left">Interval</th>
+                  <th className="py-2 px-3 text-left">Last Updated</th>
                 </tr>
               </thead>
               <tbody>
@@ -86,15 +84,15 @@ export default function IntervalsPage() {
                     return (
                       <tr
                         key={interval.driver_number}
-                        className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
+                        className="border-b-2 border-nb-primary hover:bg-nb-yellow/10"
                       >
-                        <td className="py-2.5 font-medium">
+                        <td className="py-2.5 px-3">
                           <div className="flex items-center gap-2">
-                            <Badge variant={idx === 0 ? "success" : "default"}>
+                            <span className={`border-2 border-nb-primary font-headline font-black uppercase text-[10px] px-2 py-0.5 ${idx === 0 ? "bg-nb-yellow text-nb-text" : "bg-nb-surface-dim text-nb-text"}`}>
                               P{idx + 1}
-                            </Badge>
+                            </span>
                             <span
-                              className="inline-block h-2.5 w-2.5 rounded-full"
+                              className="inline-block w-1 h-6"
                               style={{
                                 backgroundColor: `#${driver?.team_colour || "888"}`,
                               }}
@@ -102,20 +100,20 @@ export default function IntervalsPage() {
                             {driver?.name_acronym || `#${interval.driver_number}`}
                           </div>
                         </td>
-                        <td className="py-2.5 text-zinc-400">
+                        <td className="py-2.5 px-3 text-nb-text-muted">
                           {driver?.team_name || "Unknown"}
                         </td>
-                        <td className="py-2.5 font-mono text-zinc-200">
+                        <td className="py-2.5 px-3 font-mono text-nb-text">
                           {interval.gap_to_leader === null
                             ? "Leader"
                             : formatInterval(interval.gap_to_leader)}
                         </td>
-                        <td className="py-2.5 font-mono text-zinc-400">
+                        <td className="py-2.5 px-3 font-mono text-nb-text-muted">
                           {interval.interval === null
                             ? "-"
                             : formatInterval(interval.interval)}
                         </td>
-                        <td className="py-2.5 text-xs text-zinc-500">
+                        <td className="py-2.5 px-3 text-xs text-nb-text-muted">
                           {interval.date ? new Date(interval.date).toLocaleTimeString() : "--"}
                         </td>
                       </tr>
@@ -125,20 +123,20 @@ export default function IntervalsPage() {
             </table>
           </div>
         )}
-      </Card>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Interval History (Recent 50)</CardTitle>
-        </CardHeader>
+      <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+        <div className="bg-nb-primary text-white p-4">
+          <h2 className="font-headline font-black uppercase text-sm tracking-tighter">Interval History (Recent 50)</h2>
+        </div>
         <div className="max-h-96 overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm font-headline font-bold">
             <thead>
-              <tr className="border-b border-zinc-800 text-zinc-500">
-                <th className="py-2 text-left font-medium">Time</th>
-                <th className="py-2 text-left font-medium">Driver</th>
-                <th className="py-2 text-left font-medium">Gap to Leader</th>
-                <th className="py-2 text-left font-medium">Interval</th>
+              <tr className="bg-nb-primary text-white font-headline font-black uppercase text-xs">
+                <th className="py-2 px-3 text-left">Time</th>
+                <th className="py-2 px-3 text-left">Driver</th>
+                <th className="py-2 px-3 text-left">Gap to Leader</th>
+                <th className="py-2 px-3 text-left">Interval</th>
               </tr>
             </thead>
             <tbody>
@@ -147,20 +145,20 @@ export default function IntervalsPage() {
                 return (
                   <tr
                     key={idx}
-                    className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
+                    className="border-b-2 border-nb-primary hover:bg-nb-yellow/10"
                   >
-                    <td className="py-2 text-xs text-zinc-500">
+                    <td className="py-2 px-3 text-xs text-nb-text-muted">
                       {interval.date ? new Date(interval.date).toLocaleTimeString() : "--"}
                     </td>
-                    <td className="py-2 font-medium">
+                    <td className="py-2 px-3">
                       {driver?.name_acronym || `#${interval.driver_number}`}
                     </td>
-                    <td className="py-2 font-mono text-zinc-400">
+                    <td className="py-2 px-3 font-mono text-nb-text-muted">
                       {interval.gap_to_leader === null
                         ? "Leader"
                         : formatInterval(interval.gap_to_leader)}
                     </td>
-                    <td className="py-2 font-mono text-zinc-400">
+                    <td className="py-2 px-3 font-mono text-nb-text-muted">
                       {formatInterval(interval.interval)}
                     </td>
                   </tr>
@@ -169,7 +167,7 @@ export default function IntervalsPage() {
             </tbody>
           </table>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

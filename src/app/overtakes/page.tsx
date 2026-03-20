@@ -4,8 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { f1Api } from "@/lib/api/f1";
 import { useSession } from "@/components/dashboard/SessionSelector";
 import { SessionSelector } from "@/components/dashboard/SessionSelector";
-import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Radio } from "lucide-react";
 import { useMemo } from "react";
@@ -43,30 +41,30 @@ export default function OvertakesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-100">
-            <Radio className="mr-2 inline" size={24} />
+          <span className="font-headline font-black uppercase text-xs tracking-tighter text-nb-text-muted">
+            <Radio className="mr-1 inline" size={14} />
+            Position Changes
+          </span>
+          <h1 className="text-5xl md:text-7xl font-black font-headline uppercase tracking-tighter mt-2 leading-none text-nb-text">
             Overtakes
           </h1>
-          <p className="text-sm text-zinc-500">
-            Position changes and overtaking moves
-          </p>
         </div>
         <SessionSelector />
       </div>
 
       {/* Overtake Stats */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Most Overtakes Made</CardTitle>
-          </CardHeader>
+        <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+          <div className="bg-nb-primary text-white p-4">
+            <h2 className="font-headline font-black uppercase text-sm tracking-tighter">Most Overtakes Made</h2>
+          </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm font-headline font-bold">
               <thead>
-                <tr className="border-b border-zinc-800 text-zinc-500">
-                  <th className="py-2 text-left font-medium">Rank</th>
-                  <th className="py-2 text-left font-medium">Driver</th>
-                  <th className="py-2 text-left font-medium">Overtakes</th>
+                <tr className="bg-nb-primary text-white font-headline font-black uppercase text-xs">
+                  <th className="py-2 px-3 text-left">Rank</th>
+                  <th className="py-2 px-3 text-left">Driver</th>
+                  <th className="py-2 px-3 text-left">Overtakes</th>
                 </tr>
               </thead>
               <tbody>
@@ -77,23 +75,25 @@ export default function OvertakesPage() {
                     return (
                       <tr
                         key={dn}
-                        className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
+                        className="border-b-2 border-nb-primary hover:bg-nb-yellow/10"
                       >
-                        <td className="py-2.5">
-                          <Badge variant={idx === 0 ? "success" : "default"}>
+                        <td className="py-2.5 px-3">
+                          <span className={`border-2 border-nb-primary font-headline font-black uppercase text-[10px] px-2 py-0.5 ${idx === 0 ? "bg-nb-yellow text-nb-text" : "bg-nb-surface-dim text-nb-text"}`}>
                             {idx + 1}
-                          </Badge>
+                          </span>
                         </td>
-                        <td className="py-2.5 font-medium">
-                          <span
-                            className="mr-2 inline-block h-2.5 w-2.5 rounded-full"
-                            style={{
-                              backgroundColor: `#${driver?.team_colour || "888"}`,
-                            }}
-                          />
-                          {driver?.name_acronym || `#${dn}`}
+                        <td className="py-2.5 px-3">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="inline-block w-1 h-6"
+                              style={{
+                                backgroundColor: `#${driver?.team_colour || "888"}`,
+                              }}
+                            />
+                            {driver?.name_acronym || `#${dn}`}
+                          </div>
                         </td>
-                        <td className="py-2.5 font-mono font-bold text-emerald-400">
+                        <td className="py-2.5 px-3 font-mono font-black text-nb-text">
                           +{count}
                         </td>
                       </tr>
@@ -102,19 +102,19 @@ export default function OvertakesPage() {
               </tbody>
             </table>
           </div>
-        </Card>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Most Times Overtaken</CardTitle>
-          </CardHeader>
+        <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+          <div className="bg-nb-primary text-white p-4">
+            <h2 className="font-headline font-black uppercase text-sm tracking-tighter">Most Times Overtaken</h2>
+          </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm font-headline font-bold">
               <thead>
-                <tr className="border-b border-zinc-800 text-zinc-500">
-                  <th className="py-2 text-left font-medium">Rank</th>
-                  <th className="py-2 text-left font-medium">Driver</th>
-                  <th className="py-2 text-left font-medium">Lost Positions</th>
+                <tr className="bg-nb-primary text-white font-headline font-black uppercase text-xs">
+                  <th className="py-2 px-3 text-left">Rank</th>
+                  <th className="py-2 px-3 text-left">Driver</th>
+                  <th className="py-2 px-3 text-left">Lost Positions</th>
                 </tr>
               </thead>
               <tbody>
@@ -125,21 +125,25 @@ export default function OvertakesPage() {
                     return (
                       <tr
                         key={dn}
-                        className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
+                        className="border-b-2 border-nb-primary hover:bg-nb-yellow/10"
                       >
-                        <td className="py-2.5">
-                          <Badge variant="default">{idx + 1}</Badge>
+                        <td className="py-2.5 px-3">
+                          <span className="border-2 border-nb-primary font-headline font-black uppercase text-[10px] px-2 py-0.5 bg-nb-surface-dim text-nb-text">
+                            {idx + 1}
+                          </span>
                         </td>
-                        <td className="py-2.5 font-medium">
-                          <span
-                            className="mr-2 inline-block h-2.5 w-2.5 rounded-full"
-                            style={{
-                              backgroundColor: `#${driver?.team_colour || "888"}`,
-                            }}
-                          />
-                          {driver?.name_acronym || `#${dn}`}
+                        <td className="py-2.5 px-3">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="inline-block w-1 h-6"
+                              style={{
+                                backgroundColor: `#${driver?.team_colour || "888"}`,
+                              }}
+                            />
+                            {driver?.name_acronym || `#${dn}`}
+                          </div>
                         </td>
-                        <td className="py-2.5 font-mono font-bold text-red-400">
+                        <td className="py-2.5 px-3 font-mono font-black text-nb-red">
                           -{count}
                         </td>
                       </tr>
@@ -148,26 +152,26 @@ export default function OvertakesPage() {
               </tbody>
             </table>
           </div>
-        </Card>
+        </div>
       </div>
 
       {/* All Overtakes */}
-      <Card>
-        <CardHeader>
-          <CardTitle>All Overtakes ({overtakes.length})</CardTitle>
-        </CardHeader>
+      <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+        <div className="bg-nb-primary text-white p-4">
+          <h2 className="font-headline font-black uppercase text-sm tracking-tighter">All Overtakes ({overtakes.length})</h2>
+        </div>
         {isLoading ? (
           <Skeleton className="h-64 w-full" />
         ) : (
           <div className="max-h-[600px] overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm font-headline font-bold">
               <thead>
-                <tr className="border-b border-zinc-800 text-zinc-500">
-                  <th className="py-2 text-left font-medium">Time</th>
-                  <th className="py-2 text-left font-medium">Overtaking</th>
-                  <th className="py-2 text-left font-medium"></th>
-                  <th className="py-2 text-left font-medium">Overtaken</th>
-                  <th className="py-2 text-left font-medium">Position</th>
+                <tr className="bg-nb-primary text-white font-headline font-black uppercase text-xs">
+                  <th className="py-2 px-3 text-left">Time</th>
+                  <th className="py-2 px-3 text-left">Overtaking</th>
+                  <th className="py-2 px-3 text-left"></th>
+                  <th className="py-2 px-3 text-left">Overtaken</th>
+                  <th className="py-2 px-3 text-left">Position</th>
                 </tr>
               </thead>
               <tbody>
@@ -177,32 +181,38 @@ export default function OvertakesPage() {
                   return (
                     <tr
                       key={idx}
-                      className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
+                      className="border-b-2 border-nb-primary hover:bg-nb-yellow/10"
                     >
-                      <td className="py-2.5 text-xs text-zinc-500">
+                      <td className="py-2.5 px-3 text-xs text-nb-text-muted">
                         {o.date ? new Date(o.date).toLocaleTimeString() : "--"}
                       </td>
-                      <td className="py-2.5 font-medium">
-                        <span
-                          className="mr-2 inline-block h-2.5 w-2.5 rounded-full"
-                          style={{
-                            backgroundColor: `#${overtaking?.team_colour || "888"}`,
-                          }}
-                        />
-                        {overtaking?.name_acronym || `#${o.overtaking_driver_number}`}
+                      <td className="py-2.5 px-3">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="inline-block w-1 h-6"
+                            style={{
+                              backgroundColor: `#${overtaking?.team_colour || "888"}`,
+                            }}
+                          />
+                          {overtaking?.name_acronym || `#${o.overtaking_driver_number}`}
+                        </div>
                       </td>
-                      <td className="py-2.5 text-zinc-600">passed</td>
-                      <td className="py-2.5 font-medium">
-                        <span
-                          className="mr-2 inline-block h-2.5 w-2.5 rounded-full"
-                          style={{
-                            backgroundColor: `#${overtaken?.team_colour || "888"}`,
-                          }}
-                        />
-                        {overtaken?.name_acronym || `#${o.overtaken_driver_number}`}
+                      <td className="py-2.5 px-3 text-nb-text-muted font-headline font-black uppercase text-[10px]">passed</td>
+                      <td className="py-2.5 px-3">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="inline-block w-1 h-6"
+                            style={{
+                              backgroundColor: `#${overtaken?.team_colour || "888"}`,
+                            }}
+                          />
+                          {overtaken?.name_acronym || `#${o.overtaken_driver_number}`}
+                        </div>
                       </td>
-                      <td className="py-2.5">
-                        <Badge variant="info">P{o.position}</Badge>
+                      <td className="py-2.5 px-3">
+                        <span className="border-2 border-nb-primary font-headline font-black uppercase text-[10px] px-2 py-0.5 bg-nb-blue text-white">
+                          P{o.position}
+                        </span>
                       </td>
                     </tr>
                   );
@@ -211,7 +221,7 @@ export default function OvertakesPage() {
             </table>
           </div>
         )}
-      </Card>
+      </div>
     </div>
   );
 }

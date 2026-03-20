@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 interface BadgeProps {
-  variant?: "default" | "success" | "warning" | "danger" | "info" | "outline";
+  variant?: "default" | "success" | "warning" | "danger" | "info" | "outline" | "yellow";
   className?: string;
   style?: React.CSSProperties;
   children: React.ReactNode;
@@ -9,18 +9,19 @@ interface BadgeProps {
 
 export function Badge({ variant = "default", className, style, children }: BadgeProps) {
   const variants = {
-    default: "bg-zinc-800 text-zinc-300",
-    success: "bg-emerald-900/50 text-emerald-400 border border-emerald-700",
-    warning: "bg-amber-900/50 text-amber-400 border border-amber-700",
-    danger: "bg-red-900/50 text-red-400 border border-red-700",
-    info: "bg-blue-900/50 text-blue-400 border border-blue-700",
-    outline: "border border-zinc-700 text-zinc-400",
+    default: "bg-nb-surface-dim text-nb-text border-2 border-nb-primary",
+    success: "bg-nb-blue text-white border-2 border-nb-primary",
+    warning: "bg-nb-yellow text-nb-primary border-2 border-nb-primary",
+    danger: "bg-nb-red text-white border-2 border-nb-primary",
+    info: "bg-nb-blue text-white border-2 border-nb-primary",
+    outline: "border-2 border-nb-primary text-nb-text",
+    yellow: "bg-nb-yellow text-nb-primary border-2 border-nb-primary",
   };
 
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+        "inline-flex items-center px-2 py-0.5 text-[10px] font-black font-headline uppercase",
         variants[variant],
         className
       )}

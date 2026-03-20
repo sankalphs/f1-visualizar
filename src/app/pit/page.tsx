@@ -4,8 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { f1Api } from "@/lib/api/f1";
 import { useSession } from "@/components/dashboard/SessionSelector";
 import { SessionSelector } from "@/components/dashboard/SessionSelector";
-import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { TableSkeleton } from "@/components/ui/Skeleton";
 import { Wrench } from "lucide-react";
 import { useMemo } from "react";
@@ -47,29 +45,31 @@ export default function PitPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-100">
-            <Wrench className="mr-2 inline" size={24} />
+          <span className="font-headline font-black uppercase text-xs tracking-tighter text-nb-text-muted">
+            <Wrench className="mr-1 inline" size={14} />
+            Pit Lane
+          </span>
+          <h1 className="text-5xl md:text-7xl font-black font-headline uppercase tracking-tighter mt-2 leading-none text-nb-text">
             Pit Stops
           </h1>
-          <p className="text-sm text-zinc-500">Pit lane timing and analysis</p>
         </div>
         <SessionSelector />
       </div>
 
       {/* Pit Summary */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Pit Stop Summary</CardTitle>
-        </CardHeader>
+      <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+        <div className="bg-nb-primary text-white p-4">
+          <h2 className="font-headline font-black uppercase text-sm tracking-tighter">Pit Stop Summary</h2>
+        </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm font-headline font-bold">
             <thead>
-              <tr className="border-b border-zinc-800 text-zinc-500">
-                <th className="py-2 text-left font-medium">Driver</th>
-                <th className="py-2 text-left font-medium">Team</th>
-                <th className="py-2 text-left font-medium">Stops</th>
-                <th className="py-2 text-left font-medium">Fastest Stop</th>
-                <th className="py-2 text-left font-medium">Avg Lane Time</th>
+              <tr className="bg-nb-primary text-white font-headline font-black uppercase text-xs">
+                <th className="py-2 px-3 text-left">Driver</th>
+                <th className="py-2 px-3 text-left">Team</th>
+                <th className="py-2 px-3 text-left">Stops</th>
+                <th className="py-2 px-3 text-left">Fastest Stop</th>
+                <th className="py-2 px-3 text-left">Avg Lane Time</th>
               </tr>
             </thead>
             <tbody>
@@ -80,25 +80,29 @@ export default function PitPage() {
                   return (
                     <tr
                       key={driverNum}
-                      className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
+                      className="border-b-2 border-nb-primary hover:bg-nb-yellow/10"
                     >
-                      <td className="py-2.5 font-medium">
-                        <span
-                          className="mr-2 inline-block h-2.5 w-2.5 rounded-full"
-                          style={{ backgroundColor: `#${driver?.team_colour || "888"}` }}
-                        />
-                        {driver?.name_acronym || `#${driverNum}`}
+                      <td className="py-2.5 px-3">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="inline-block w-1 h-6"
+                            style={{ backgroundColor: `#${driver?.team_colour || "888"}` }}
+                          />
+                          {driver?.name_acronym || `#${driverNum}`}
+                        </div>
                       </td>
-                      <td className="py-2.5 text-zinc-400">
+                      <td className="py-2.5 px-3 text-nb-text-muted">
                         {driver?.team_name || "Unknown"}
                       </td>
-                      <td className="py-2.5">
-                        <Badge variant="info">{stats.count}</Badge>
+                      <td className="py-2.5 px-3">
+                        <span className="border-2 border-nb-primary font-headline font-black uppercase text-[10px] px-2 py-0.5 bg-nb-blue text-white">
+                          {stats.count}
+                        </span>
                       </td>
-                      <td className="py-2.5 font-mono font-semibold text-emerald-400">
+                      <td className="py-2.5 px-3 font-mono font-black text-nb-text">
                         {stats.minTime === Infinity ? "--" : `${stats.minTime.toFixed(2)}s`}
                       </td>
-                      <td className="py-2.5 font-mono text-zinc-400">
+                      <td className="py-2.5 px-3 font-mono text-nb-text-muted">
                         {stats.count > 0 ? `${(stats.totalTime / stats.count).toFixed(2)}s` : "--"}
                       </td>
                     </tr>
@@ -107,26 +111,26 @@ export default function PitPage() {
             </tbody>
           </table>
         </div>
-      </Card>
+      </div>
 
       {/* All Pit Stops */}
-      <Card>
-        <CardHeader>
-          <CardTitle>All Pit Stops ({pitStops.length})</CardTitle>
-        </CardHeader>
+      <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+        <div className="bg-nb-primary text-white p-4">
+          <h2 className="font-headline font-black uppercase text-sm tracking-tighter">All Pit Stops ({pitStops.length})</h2>
+        </div>
         {pitLoading ? (
           <TableSkeleton rows={15} cols={6} />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm font-headline font-bold">
               <thead>
-                <tr className="border-b border-zinc-800 text-zinc-500">
-                  <th className="py-2 text-left font-medium">#</th>
-                  <th className="py-2 text-left font-medium">Driver</th>
-                  <th className="py-2 text-left font-medium">Lap</th>
-                  <th className="py-2 text-left font-medium">Lane Duration</th>
-                  <th className="py-2 text-left font-medium">Stop Duration</th>
-                  <th className="py-2 text-left font-medium">Time</th>
+                <tr className="bg-nb-primary text-white font-headline font-black uppercase text-xs">
+                  <th className="py-2 px-3 text-left">#</th>
+                  <th className="py-2 px-3 text-left">Driver</th>
+                  <th className="py-2 px-3 text-left">Lap</th>
+                  <th className="py-2 px-3 text-left">Lane Duration</th>
+                  <th className="py-2 px-3 text-left">Stop Duration</th>
+                  <th className="py-2 px-3 text-left">Time</th>
                 </tr>
               </thead>
               <tbody>
@@ -135,26 +139,28 @@ export default function PitPage() {
                   return (
                     <tr
                       key={idx}
-                      className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
+                      className="border-b-2 border-nb-primary hover:bg-nb-yellow/10"
                     >
-                      <td className="py-2.5 text-zinc-500">{idx + 1}</td>
-                      <td className="py-2.5 font-medium">
-                        <span
-                          className="mr-2 inline-block h-2.5 w-2.5 rounded-full"
-                          style={{ backgroundColor: `#${driver?.team_colour || "888"}` }}
-                        />
-                        {driver?.name_acronym || `#${pit.driver_number}`}
+                      <td className="py-2.5 px-3 text-nb-text-muted">{idx + 1}</td>
+                      <td className="py-2.5 px-3">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="inline-block w-1 h-6"
+                            style={{ backgroundColor: `#${driver?.team_colour || "888"}` }}
+                          />
+                          {driver?.name_acronym || `#${pit.driver_number}`}
+                        </div>
                       </td>
-                      <td className="py-2.5">L{pit.lap_number}</td>
-                      <td className="py-2.5 font-mono text-zinc-200">
+                      <td className="py-2.5 px-3">L{pit.lap_number}</td>
+                      <td className="py-2.5 px-3 font-mono text-nb-text">
                         {pit.lane_duration != null ? `${pit.lane_duration.toFixed(2)}s` : "--"}
                       </td>
-                      <td className="py-2.5 font-mono text-zinc-400">
+                      <td className="py-2.5 px-3 font-mono text-nb-text-muted">
                         {pit.stop_duration !== null
                           ? `${pit.stop_duration.toFixed(2)}s`
                           : "N/A"}
                       </td>
-                      <td className="py-2.5 text-xs text-zinc-500">
+                      <td className="py-2.5 px-3 text-xs text-nb-text-muted">
                         {pit.date ? new Date(pit.date).toLocaleTimeString() : "--"}
                       </td>
                     </tr>
@@ -164,7 +170,7 @@ export default function PitPage() {
             </table>
           </div>
         )}
-      </Card>
+      </div>
     </div>
   );
 }

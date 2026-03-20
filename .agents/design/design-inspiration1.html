@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>F1 VISUALIZER - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-fixed": "#1a1a1a",
+                        "background": "#f5f0e8",
+                        "surface-container-highest": "#e2ddd4",
+                        "primary": "#1a1a1a",
+                        "on-secondary": "#1a1a1a",
+                        "on-error-container": "#93000a",
+                        "outline": "#1a1a1a",
+                        "surface-variant": "#e8e3da",
+                        "primary-container": "#ffcc00",
+                        "on-error": "#ffffff",
+                        "on-tertiary-container": "#1a1a1a",
+                        "surface-container": "#eee9e0",
+                        "secondary": "#e63b2e",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#1a1a1a",
+                        "inverse-surface": "#1a1a1a",
+                        "surface-dim": "#d6d1c9",
+                        "on-surface-variant": "#4a4a4a",
+                        "tertiary": "#0055ff",
+                        "inverse-primary": "#f5f0e8",
+                        "surface-tint": "#1a1a1a",
+                        "surface": "#f5f0e8",
+                        "primary-fixed": "#ffcc00",
+                        "outline-variant": "#d0cbc3",
+                        "on-primary": "#ffffff",
+                        "on-background": "#1a1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#faf7f2",
+                        "on-secondary-container": "#1a1a1a",
+                        "on-primary-fixed": "#1a1a1a",
+                        "surface-container-high": "#e8e3da"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "label": ["Space Grotesk"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #f5f0e8;
+            color: #1a1a1a;
+            font-family: 'Inter', sans-serif;
+        }
+        .neo-brutal-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(26, 26, 26, 1);
+        }
+        .neo-brutal-shadow-sm {
+            box-shadow: 2px 2px 0px 0px rgba(26, 26, 26, 1);
+        }
+        .neo-brutal-shadow-lg {
+            box-shadow: 8px 8px 0px 0px rgba(26, 26, 26, 1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background">
+<!-- TopNavBar Implementation from JSON -->
+<header class="sticky top-0 z-50 flex items-center justify-between w-full px-6 py-4 bg-[#f5f0e8] dark:bg-zinc-900 border-b-4 border-[#1a1a1a] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)]">
+<div class="flex items-center gap-8">
+<span class="text-3xl font-black italic tracking-tighter text-[#e63b2e] dark:text-[#ffcc00] font-['Space_Grotesk']">F1 VISUALIZER</span>
+<nav class="hidden md:flex items-center gap-6 font-['Space_Grotesk'] font-bold uppercase tracking-tighter">
+<a class="text-[#e63b2e] dark:text-[#ffcc00] border-b-4 border-[#e63b2e] dark:border-[#ffcc00] pb-1" href="#">Dashboard</a>
+<a class="text-[#1a1a1a] dark:text-zinc-400 hover:text-[#0055ff] transition-colors duration-100" href="#">Telemetry</a>
+<a class="text-[#1a1a1a] dark:text-zinc-400 hover:text-[#0055ff] transition-colors duration-100" href="#">Strategy</a>
+<a class="text-[#1a1a1a] dark:text-zinc-400 hover:text-[#0055ff] transition-colors duration-100" href="#">Standings</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden lg:flex items-center bg-white border-2 border-primary px-3 py-1 neo-brutal-shadow-sm">
+<span class="material-symbols-outlined text-xl mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-xs font-bold uppercase w-48" placeholder="SEARCH DATA..." type="text"/>
+</div>
+<button class="p-2 border-2 border-primary hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 border-2 border-primary hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-10 h-10 border-2 border-primary overflow-hidden">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="Close up portrait of a professional man" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5dHF4nRucp3-IyrcbokRBNJ2Y6jYiXgvCS2-Mq8D7wGRXNjYBs8qJbxFt1auAtbuoipZ7ufjoL3VQyD3wGHDVrvdHCcmDf8cJ6_GXaDvOS-FPAOJNOeC4pCD9sXpMz8UPjvmewWl6js07yTs5sRDm0HzmuiSNs4oBZGzkHrFxM35-0Q4VnYZ-kq0t-3If_ICeambhCcWZPiyZErFfmMyu9UTQjgldvvk8OOomCbOxfyh8iWSVEQ0C2QF59ieJxIpASqGb-BXNMQ"/>
+</div>
+</div>
+</header>
+<div class="flex min-h-screen">
+<!-- SideNavBar Implementation from JSON -->
+<aside class="fixed left-0 top-0 h-full overflow-y-auto z-40 pt-24 pb-10 w-64 bg-[#f5f0e8] dark:bg-zinc-950 border-r-4 border-[#1a1a1a] hidden md:flex flex-col">
+<div class="px-4 mb-6">
+<div class="text-xl font-black border-b-2 border-[#1a1a1a] mb-4 font-['Space_Grotesk'] uppercase">GRAND PRIX</div>
+<div class="text-[10px] font-bold tracking-widest text-secondary opacity-80 font-['Space_Grotesk']">LIVE TELEMETRY</div>
+</div>
+<nav class="flex flex-col font-['Space_Grotesk'] font-bold text-sm uppercase">
+<a class="bg-[#ffcc00] text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] my-1 mx-2 p-3 flex items-center gap-3 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="text-[#1a1a1a] dark:text-zinc-400 p-3 mx-2 flex items-center gap-3 hover:bg-[#0055ff] hover:text-white hover:skew-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="timer">timer</span>
+<span>Lap Times</span>
+</a>
+<a class="text-[#1a1a1a] dark:text-zinc-400 p-3 mx-2 flex items-center gap-3 hover:bg-[#0055ff] hover:text-white hover:skew-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="insights">insights</span>
+<span>Telemetry</span>
+</a>
+<a class="text-[#1a1a1a] dark:text-zinc-400 p-3 mx-2 flex items-center gap-3 hover:bg-[#0055ff] hover:text-white hover:skew-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span>Strategy</span>
+</a>
+<a class="text-[#1a1a1a] dark:text-zinc-400 p-3 mx-2 flex items-center gap-3 hover:bg-[#0055ff] hover:text-white hover:skew-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+<span>Standings</span>
+</a>
+<a class="text-[#1a1a1a] dark:text-zinc-400 p-3 mx-2 flex items-center gap-3 hover:bg-[#0055ff] hover:text-white hover:skew-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="event">event</span>
+<span>Sessions</span>
+</a>
+<a class="text-[#1a1a1a] dark:text-zinc-400 p-3 mx-2 flex items-center gap-3 hover:bg-[#0055ff] hover:text-white hover:skew-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span>Drivers</span>
+</a>
+<a class="text-[#1a1a1a] dark:text-zinc-400 p-3 mx-2 flex items-center gap-3 hover:bg-[#0055ff] hover:text-white hover:skew-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="format_list_numbered">format_list_numbered</span>
+<span>Intervals</span>
+</a>
+</nav>
+<div class="mt-auto px-4 pt-6">
+<button class="w-full bg-secondary text-white font-black py-4 border-2 border-primary neo-brutal-shadow active:translate-x-1 active:translate-y-1 active:shadow-none transition-all uppercase tracking-widest text-xs">
+                    WATCH LIVE
+                </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 p-6 lg:p-8">
+<!-- Hero Banner -->
+<section class="relative bg-primary text-white p-8 lg:p-12 border-4 border-primary neo-brutal-shadow-lg mb-8 overflow-hidden">
+<div class="relative z-10 flex flex-col md:flex-row justify-between items-end gap-6">
+<div>
+<h2 class="font-headline font-black text-6xl lg:text-8xl leading-none tracking-tighter uppercase italic">DUTCH<br/>GRAND PRIX</h2>
+<div class="mt-4 flex flex-wrap gap-4 font-headline font-bold uppercase text-xl">
+<span class="bg-primary-container text-primary px-3 py-1">CIRCUIT ZANDVOORT</span>
+<span class="bg-secondary text-white px-3 py-1">QUALIFYING SESSION</span>
+</div>
+</div>
+<div class="text-right border-l-4 border-primary-container pl-6">
+<p class="font-headline font-black text-3xl">AUG 25, 2024</p>
+<p class="font-headline font-black text-5xl text-primary-container">15:00 LOCAL</p>
+</div>
+</div>
+<!-- Abstract Design Elements -->
+<div class="absolute top-0 right-0 w-1/2 h-full opacity-20 pointer-events-none">
+<div class="absolute inset-0 bg-[repeating-linear-gradient(45deg,#ffcc00, #ffcc00_10px,#1a1a1a_10px,#1a1a1a_20px)]"></div>
+</div>
+</section>
+<!-- Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Quick Stats Grid (Left Column) -->
+<div class="lg:col-span-8 space-y-8">
+<div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+<div class="bg-primary-container border-4 border-primary p-4 neo-brutal-shadow-sm flex flex-col justify-between aspect-square md:aspect-auto h-32">
+<span class="text-[10px] font-black uppercase tracking-widest">LEADER</span>
+<span class="font-headline font-black text-3xl">VER</span>
+</div>
+<div class="bg-white border-4 border-primary p-4 neo-brutal-shadow-sm flex flex-col justify-between h-32">
+<span class="text-[10px] font-black uppercase tracking-widest flex items-center gap-1"><span class="material-symbols-outlined text-sm">thermostat</span> TRACK</span>
+<span class="font-headline font-black text-3xl">42°C</span>
+</div>
+<div class="bg-white border-4 border-primary p-4 neo-brutal-shadow-sm flex flex-col justify-between h-32">
+<span class="text-[10px] font-black uppercase tracking-widest flex items-center gap-1"><span class="material-symbols-outlined text-sm">air</span> AIR</span>
+<span class="font-headline font-black text-3xl">24°C</span>
+</div>
+<div class="bg-white border-4 border-primary p-4 neo-brutal-shadow-sm flex flex-col justify-between h-32">
+<span class="text-[10px] font-black uppercase tracking-widest flex items-center gap-1"><span class="material-symbols-outlined text-sm">humidity_mid</span> HUMIDITY</span>
+<span class="font-headline font-black text-3xl">45%</span>
+</div>
+<div class="bg-white border-4 border-primary p-4 neo-brutal-shadow-sm flex flex-col justify-between h-32 col-span-2 md:col-span-1">
+<span class="text-[10px] font-black uppercase tracking-widest flex items-center gap-1"><span class="material-symbols-outlined text-sm">cyclone</span> WIND</span>
+<span class="font-headline font-black text-3xl">12 <span class="text-sm">KM/H</span></span>
+</div>
+</div>
+<!-- Mini Live Track Map -->
+<div class="bg-white border-4 border-primary neo-brutal-shadow p-6">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline font-black text-2xl uppercase tracking-tighter border-b-4 border-secondary">LIVE TRACK POSITION</h3>
+<div class="flex gap-2">
+<span class="px-2 py-1 bg-primary text-white text-[10px] font-bold">SECTOR 1</span>
+<span class="px-2 py-1 bg-primary-container text-primary text-[10px] font-bold">SECTOR 2</span>
+<span class="px-2 py-1 bg-secondary text-white text-[10px] font-bold">SECTOR 3</span>
+</div>
+</div>
+<div class="relative aspect-[21/9] bg-surface-container border-2 border-primary-container overflow-hidden flex items-center justify-center">
+<!-- SVG Map Substitute -->
+<svg class="w-full h-full p-8" viewbox="0 0 800 350">
+<path d="M100,250 Q150,100 300,120 T500,200 T700,100" fill="none" stroke="#1a1a1a" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></path>
+<path d="M100,250 Q150,100 300,120 T500,200 T700,100" fill="none" stroke="#ffffff" stroke-dasharray="8 8" stroke-linecap="round" stroke-width="4"></path>
+<!-- Driver Dots -->
+<g>
+<circle cx="280" cy="118" fill="#e63b2e" r="10" stroke="#1a1a1a" stroke-width="2"></circle>
+<text fill="#1a1a1a" font-family="Space Grotesk" font-size="12" font-weight="900" text-anchor="middle" x="280" y="105">VER</text>
+</g>
+<g>
+<circle cx="450" cy="178" fill="#0055ff" r="10" stroke="#1a1a1a" stroke-width="2"></circle>
+<text fill="#1a1a1a" font-family="Space Grotesk" font-size="12" font-weight="900" text-anchor="middle" x="450" y="165">NOR</text>
+</g>
+<g>
+<circle cx="410" cy="165" fill="#ffcc00" r="10" stroke="#1a1a1a" stroke-width="2"></circle>
+<text fill="#1a1a1a" font-family="Space Grotesk" font-size="12" font-weight="900" text-anchor="middle" x="410" y="152">PIA</text>
+</g>
+</svg>
+<div class="absolute bottom-4 right-4 bg-white border-2 border-primary p-2 flex items-center gap-2">
+<div class="w-3 h-3 bg-secondary animate-pulse rounded-full"></div>
+<span class="text-[10px] font-black uppercase">LIVE STREAM ACTIVE</span>
+</div>
+</div>
+</div>
+<!-- Latest Lap Times Table -->
+<div class="bg-white border-4 border-primary neo-brutal-shadow">
+<div class="p-4 border-b-4 border-primary flex justify-between items-center bg-tertiary text-white">
+<h3 class="font-headline font-black text-2xl uppercase tracking-tighter">TOP 5 LAP TIMES</h3>
+<span class="text-[10px] font-bold bg-white text-tertiary px-2 py-1">LIVE UPDATE</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container border-b-2 border-primary">
+<th class="p-4 font-headline font-black uppercase text-xs">POS</th>
+<th class="p-4 font-headline font-black uppercase text-xs">DRIVER</th>
+<th class="p-4 font-headline font-black uppercase text-xs">LAP TIME</th>
+<th class="p-4 font-headline font-black uppercase text-xs">GAP</th>
+<th class="p-4 font-headline font-black uppercase text-xs">TYRE</th>
+</tr>
+</thead>
+<tbody class="font-body font-bold text-sm">
+<tr class="border-b-2 border-primary hover:bg-primary-container/20 transition-colors">
+<td class="p-4">1</td>
+<td class="p-4 flex items-center gap-2">
+<div class="w-1 h-6 bg-secondary"></div> VERSTAPPEN
+                                        </td>
+<td class="p-4 font-headline font-black">1:10.567</td>
+<td class="p-4">-</td>
+<td class="p-4"><span class="w-6 h-6 rounded-full border-2 border-primary bg-secondary text-[8px] flex items-center justify-center text-white">S</span></td>
+</tr>
+<tr class="border-b-2 border-primary hover:bg-primary-container/20 transition-colors">
+<td class="p-4">2</td>
+<td class="p-4 flex items-center gap-2">
+<div class="w-1 h-6 bg-tertiary"></div> NORRIS
+                                        </td>
+<td class="p-4 font-headline font-black">1:10.712</td>
+<td class="p-4 text-secondary">+0.145</td>
+<td class="p-4"><span class="w-6 h-6 rounded-full border-2 border-primary bg-secondary text-[8px] flex items-center justify-center text-white">S</span></td>
+</tr>
+<tr class="border-b-2 border-primary hover:bg-primary-container/20 transition-colors">
+<td class="p-4">3</td>
+<td class="p-4 flex items-center gap-2">
+<div class="w-1 h-6 bg-primary-container"></div> PIASTRI
+                                        </td>
+<td class="p-4 font-headline font-black">1:10.889</td>
+<td class="p-4 text-secondary">+0.322</td>
+<td class="p-4"><span class="w-6 h-6 rounded-full border-2 border-primary bg-secondary text-[8px] flex items-center justify-center text-white">S</span></td>
+</tr>
+<tr class="border-b-2 border-primary hover:bg-primary-container/20 transition-colors">
+<td class="p-4">4</td>
+<td class="p-4 flex items-center gap-2">
+<div class="w-1 h-6 bg-tertiary"></div> RUSSELL
+                                        </td>
+<td class="p-4 font-headline font-black">1:11.002</td>
+<td class="p-4 text-secondary">+0.435</td>
+<td class="p-4"><span class="w-6 h-6 rounded-full border-2 border-primary bg-surface-container-highest text-[8px] flex items-center justify-center text-primary">M</span></td>
+</tr>
+<tr class="hover:bg-primary-container/20 transition-colors">
+<td class="p-4">5</td>
+<td class="p-4 flex items-center gap-2">
+<div class="w-1 h-6 bg-secondary"></div> HAMILTON
+                                        </td>
+<td class="p-4 font-headline font-black">1:11.050</td>
+<td class="p-4 text-secondary">+0.483</td>
+<td class="p-4"><span class="w-6 h-6 rounded-full border-2 border-primary bg-surface-container-highest text-[8px] flex items-center justify-center text-primary">M</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Race Control & Secondary Info (Right Column) -->
+<div class="lg:col-span-4 space-y-8">
+<!-- Race Control Events -->
+<div class="bg-white border-4 border-primary neo-brutal-shadow h-full flex flex-col">
+<div class="p-4 border-b-4 border-primary bg-secondary text-white">
+<h3 class="font-headline font-black text-2xl uppercase tracking-tighter flex items-center gap-2">
+<span class="material-symbols-outlined">flag</span> RACE CONTROL
+                            </h3>
+</div>
+<div class="flex-1 p-4 space-y-4">
+<div class="border-2 border-primary p-3 bg-primary-container/10 flex gap-4">
+<div class="font-headline font-black text-lg text-secondary min-w-[60px]">LAP 12</div>
+<div class="font-body font-bold text-sm">
+<span class="block text-secondary font-black uppercase text-xs">YELLOW FLAG SECTOR 2</span>
+                                    OFF TRACK (SAU) - NO DAMAGE REPORTED.
+                                </div>
+</div>
+<div class="border-2 border-primary p-3 flex gap-4">
+<div class="font-headline font-black text-lg min-w-[60px]">LAP 10</div>
+<div class="font-body font-bold text-sm">
+<span class="block font-black uppercase text-xs">DRS ENABLED</span>
+                                    SYSTEMS ONLINE FOR ALL SECTORS.
+                                </div>
+</div>
+<div class="border-2 border-primary p-3 flex gap-4 opacity-60">
+<div class="font-headline font-black text-lg min-w-[60px]">LAP 08</div>
+<div class="font-body font-bold text-sm">
+<span class="block font-black uppercase text-xs">PIT WINDOW OPEN</span>
+                                    EXPECTED 1-STOP STRATEGY ACTIVE.
+                                </div>
+</div>
+<div class="border-2 border-primary p-3 flex gap-4 opacity-60">
+<div class="font-headline font-black text-lg min-w-[60px]">LAP 05</div>
+<div class="font-body font-bold text-sm">
+<span class="block font-black uppercase text-xs">INCIDENT CLEARED</span>
+                                    SECTOR 1 GREEN FLAG.
+                                </div>
+</div>
+</div>
+<button class="m-4 bg-primary text-white font-black py-3 uppercase text-xs tracking-widest border-2 border-primary hover:bg-white hover:text-primary transition-all">
+                            VIEW ALL EVENTS
+                        </button>
+</div>
+<!-- Strategy Card -->
+<div class="bg-primary-container border-4 border-primary p-6 neo-brutal-shadow">
+<h4 class="font-headline font-black text-xl mb-4 uppercase italic">STRATEGY PREDICTION</h4>
+<div class="space-y-4">
+<div>
+<div class="flex justify-between text-[10px] font-black uppercase mb-1">
+<span>SOFT COMPOUND WEAR</span>
+<span>68%</span>
+</div>
+<div class="h-4 border-2 border-primary bg-white">
+<div class="h-full bg-secondary w-[68%]" style="width: 68%;"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 pt-4">
+<div class="border-2 border-primary p-2 bg-white">
+<p class="text-[8px] font-black uppercase opacity-60">PIT STOP EST.</p>
+<p class="font-headline font-black text-lg">LAP 18-22</p>
+</div>
+<div class="border-2 border-primary p-2 bg-white">
+<p class="text-[8px] font-black uppercase opacity-60">WEATHER RISK</p>
+<p class="font-headline font-black text-lg text-tertiary">LOW (5%)</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Mobile Bottom Navigation -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-[#f5f0e8] border-t-4 border-[#1a1a1a] flex justify-around items-center h-16 z-50 shadow-[0_-4px_10px_rgba(0,0,0,0.1)]">
+<a class="flex flex-col items-center justify-center text-[#e63b2e]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-[8px] font-black uppercase">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#1a1a1a]" href="#">
+<span class="material-symbols-outlined">timer</span>
+<span class="text-[8px] font-black uppercase">Live</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#1a1a1a]" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span class="text-[8px] font-black uppercase">Stats</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#1a1a1a]" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[8px] font-black uppercase">Drivers</span>
+</a>
+</nav>
+</body></html>

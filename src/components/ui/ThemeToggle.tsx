@@ -15,17 +15,17 @@ export function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <div className="h-8 w-8 rounded-lg bg-zinc-800 animate-pulse" />
+      <div className="h-10 w-10 border-2 border-nb-primary bg-nb-surface-dim animate-pulse" />
     );
   }
 
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-700 bg-zinc-800 text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-zinc-200"
+      className="flex h-10 w-10 items-center justify-center border-2 border-nb-primary bg-nb-surface text-nb-text hover:bg-nb-yellow hover:text-nb-primary transition-colors shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]"
       aria-label="Toggle theme"
     >
-      {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
+      {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
     </button>
   );
 }

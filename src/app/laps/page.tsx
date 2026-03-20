@@ -3,7 +3,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { f1Api } from "@/lib/api/f1";
 import { useSession } from "@/components/dashboard/SessionSelector";
-import { SessionSelector } from "@/components/dashboard/SessionSelector";
 import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { TableSkeleton } from "@/components/ui/Skeleton";
@@ -43,114 +42,105 @@ export default function LapsPage() {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-100">
-            <Timer className="mr-2 inline" size={24} />
+          <span className="bg-nb-primary text-white px-3 py-1 text-xs font-black uppercase font-headline">
+            Timing Data
+          </span>
+          <h1 className="text-5xl md:text-7xl font-black font-headline uppercase tracking-tighter mt-2 leading-none">
             Lap Times
           </h1>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm font-bold font-headline text-nb-text-muted uppercase mt-1">
             Detailed lap-by-lap timing data
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <select
-            value={selectedDriver ?? ""}
-            onChange={(e) =>
-              setSelectedDriver(e.target.value ? Number(e.target.value) : null)
-            }
-            className="rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm text-zinc-200 focus:border-red-500 focus:outline-none"
-          >
-            <option value="">All Drivers</option>
-            {drivers.map((d) => (
-              <option key={d.driver_number} value={d.driver_number}>
-                {d.name_acronym || `#${d.driver_number}`} - {d.team_name || ""}
-              </option>
-            ))}
-          </select>
-          <SessionSelector />
-        </div>
+        <select
+          value={selectedDriver ?? ""}
+          onChange={(e) =>
+            setSelectedDriver(e.target.value ? Number(e.target.value) : null)
+          }
+          className="border-4 border-nb-primary bg-nb-surface px-4 py-2 font-headline font-bold text-sm uppercase text-nb-text focus:border-nb-blue focus:outline-none neo-shadow-sm"
+        >
+          <option value="">ALL DRIVERS</option>
+          {drivers.map((d) => (
+            <option key={d.driver_number} value={d.driver_number}>
+              {d.name_acronym || `#${d.driver_number}`} - {d.team_name || ""}
+            </option>
+          ))}
+        </select>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle>
-            All Laps ({sortedLaps.length})
+            <span className="flex items-center gap-2">
+              <Timer size={16} />
+              ALL LAPS ({sortedLaps.length})
+            </span>
           </CardTitle>
+          <Badge variant="yellow">LIVE</Badge>
         </CardHeader>
         {isLoading ? (
           <TableSkeleton rows={20} cols={8} />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-zinc-800 text-zinc-500">
-                  <th className="py-2 text-left font-medium">Rank</th>
-                  <th className="py-2 text-left font-medium">Driver</th>
-                  <th className="py-2 text-left font-medium">Lap</th>
-                  <th className="py-2 text-left font-medium">Lap Time</th>
-                  <th className="py-2 text-left font-medium">S1</th>
-                  <th className="py-2 text-left font-medium">S2</th>
-                  <th className="py-2 text-left font-medium">S3</th>
-                  <th className="py-2 text-left font-medium">I1</th>
-                  <th className="py-2 text-left font-medium">I2</th>
-                  <th className="py-2 text-left font-medium">ST</th>
-                  <th className="py-2 text-left font-medium">Pit Out</th>
+                <tr className="bg-nb-surface-dim border-b-2 border-nb-primary font-headline font-black uppercase text-xs">
+                  <th className="p-3 border-r-2 border-nb-primary">RANK</th>
+                  <th className="p-3 border-r-2 border-nb-primary">DRIVER</th>
+                  <th className="p-3 border-r-2 border-nb-primary">LAP</th>
+                  <th className="p-3 border-r-2 border-nb-primary">LAP TIME</th>
+                  <th className="p-3 border-r-2 border-nb-primary">S1</th>
+                  <th className="p-3 border-r-2 border-nb-primary">S2</th>
+                  <th className="p-3 border-r-2 border-nb-primary">S3</th>
+                  <th className="p-3 border-r-2 border-nb-primary">SPEED</th>
+                  <th className="p-3">PIT</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="font-headline font-bold text-sm">
                 {sortedLaps.map((lap, idx) => {
                   const driver = driverMap.get(lap.driver_number);
                   return (
                     <tr
                       key={`${lap.driver_number}-${lap.lap_number}`}
-                      className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
+                      className="border-b-2 border-nb-primary hover:bg-nb-yellow/10 transition-colors"
                     >
-                      <td className="py-2.5">
-                        <Badge variant={idx === 0 ? "success" : "default"}>
-                          {idx + 1}
-                        </Badge>
+                      <td className="p-3 border-r-2 border-nb-primary">
+                        <span className={idx === 0 ? "font-black text-nb-red" : ""}>{idx + 1}</span>
                       </td>
-                      <td className="py-2.5 font-medium">
+                      <td className="p-3 border-r-2 border-nb-primary">
                         <div className="flex items-center gap-2">
-                          <span
-                            className="inline-block h-2.5 w-2.5 rounded-full"
-                            style={{
-                              backgroundColor: `#${driver?.team_colour || "888"}`,
-                            }}
+                          <div
+                            className="w-1 h-6"
+                            style={{ backgroundColor: `#${driver?.team_colour || "888"}` }}
                           />
-                          {driver?.name_acronym || `#${lap.driver_number}`}
+                          <span className="italic">
+                            {driver?.name_acronym || `#${lap.driver_number}`}
+                          </span>
                         </div>
                       </td>
-                      <td className="py-2.5 text-zinc-400">
+                      <td className="p-3 border-r-2 border-nb-primary text-nb-text-muted">
                         L{lap.lap_number}
                       </td>
-                      <td className="py-2.5 font-mono font-semibold text-zinc-100">
+                      <td className="p-3 border-r-2 border-nb-primary font-black italic">
                         {formatLapTime(lap.lap_duration)}
                       </td>
-                      <td className="py-2.5 font-mono text-zinc-400">
+                      <td className="p-3 border-r-2 border-nb-primary text-nb-text-muted font-mono text-xs">
                         {lap.duration_sector_1?.toFixed(3) ?? "--"}
                       </td>
-                      <td className="py-2.5 font-mono text-zinc-400">
+                      <td className="p-3 border-r-2 border-nb-primary text-nb-text-muted font-mono text-xs">
                         {lap.duration_sector_2?.toFixed(3) ?? "--"}
                       </td>
-                      <td className="py-2.5 font-mono text-zinc-400">
+                      <td className="p-3 border-r-2 border-nb-primary text-nb-text-muted font-mono text-xs">
                         {lap.duration_sector_3?.toFixed(3) ?? "--"}
                       </td>
-                      <td className="py-2.5 font-mono text-zinc-400">
-                        {lap.i1_speed ? `${lap.i1_speed}` : "--"}
-                      </td>
-                      <td className="py-2.5 font-mono text-zinc-400">
-                        {lap.i2_speed ? `${lap.i2_speed}` : "--"}
-                      </td>
-                      <td className="py-2.5 font-mono text-zinc-400">
+                      <td className="p-3 border-r-2 border-nb-primary text-nb-text-muted font-mono text-xs">
                         {lap.st_speed ? `${lap.st_speed}` : "--"}
                       </td>
-                      <td className="py-2.5">
-                        {lap.is_pit_out_lap && (
-                          <Badge variant="warning">PIT</Badge>
-                        )}
+                      <td className="p-3">
+                        {lap.is_pit_out_lap && <Badge variant="warning">PIT</Badge>}
                       </td>
                     </tr>
                   );

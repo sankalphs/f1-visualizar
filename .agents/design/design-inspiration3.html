@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>F1 VISUALIZER - Strategy &amp; Pit Stops</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed": "#1a1a1a",
+              "background": "#f5f0e8",
+              "surface-container-highest": "#e2ddd4",
+              "primary": "#1a1a1a",
+              "on-secondary": "#1a1a1a",
+              "on-error-container": "#93000a",
+              "outline": "#1a1a1a",
+              "surface-variant": "#e8e3da",
+              "primary-container": "#ffcc00",
+              "on-error": "#ffffff",
+              "on-tertiary-container": "#1a1a1a",
+              "surface-container": "#eee9e0",
+              "secondary": "#e63b2e",
+              "on-tertiary-fixed": "#1a1a1a",
+              "error-container": "#ffdad6",
+              "on-primary-fixed-variant": "#1a1a1a",
+              "inverse-surface": "#1a1a1a",
+              "on-tertiary": "#ffffff",
+              "on-primary-container": "#1a1a1a",
+              "inverse-on-surface": "#f5f0e8",
+              "surface-dim": "#d6d1c9",
+              "on-surface-variant": "#4a4a4a",
+              "tertiary": "#0055ff",
+              "inverse-primary": "#f5f0e8",
+              "surface-tint": "#1a1a1a",
+              "surface": "#f5f0e8",
+              "primary-fixed-dim": "#e6b800",
+              "tertiary-fixed": "#d6e3ff",
+              "on-secondary-fixed-variant": "#1a1a1a",
+              "error": "#cc0000",
+              "surface-container-low": "#f2ede5",
+              "secondary-fixed-dim": "#ffb3ab",
+              "on-surface": "#1a1a1a",
+              "secondary-container": "#ffdad6",
+              "primary-fixed": "#ffcc00",
+              "outline-variant": "#d0cbc3",
+              "secondary-fixed": "#ffdad6",
+              "on-primary": "#ffffff",
+              "on-background": "#1a1a1a",
+              "tertiary-fixed-dim": "#a8c6ff",
+              "tertiary-container": "#d6e3ff",
+              "on-tertiary-fixed-variant": "#1a1a1a",
+              "surface-container-lowest": "#ffffff",
+              "surface-bright": "#faf7f2",
+              "on-secondary-container": "#1a1a1a",
+              "on-primary-fixed": "#1a1a1a",
+              "surface-container-high": "#e8e3da"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Inter"],
+              "label": ["Space Grotesk"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .neo-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(26,26,26,1);
+        }
+        .neo-shadow-sm {
+            box-shadow: 2px 2px 0px 0px rgba(26,26,26,1);
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body">
+<!-- TopNavBar -->
+<header class="sticky top-0 z-50 flex items-center justify-between w-full px-6 py-4 bg-[#f5f0e8] border-b-4 border-[#1a1a1a] shadow-[4px_4px_0px_0px_rgba(26,26,26,1)]">
+<div class="flex items-center gap-8">
+<h1 class="text-3xl font-black italic tracking-tighter text-[#e63b2e] font-headline uppercase">F1 VISUALIZER</h1>
+<nav class="hidden md:flex items-center gap-6 font-headline font-bold uppercase tracking-tighter">
+<a class="text-[#1a1a1a] hover:text-[#0055ff] transition-colors duration-100" href="#">Dashboard</a>
+<a class="text-[#1a1a1a] hover:text-[#0055ff] transition-colors duration-100" href="#">Telemetry</a>
+<a class="text-[#e63b2e] border-b-4 border-[#e63b2e] pb-1" href="#">Strategy</a>
+<a class="text-[#1a1a1a] hover:text-[#0055ff] transition-colors duration-100" href="#">Standings</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<input class="bg-surface-container border-2 border-primary px-4 py-1 font-headline font-bold text-sm focus:outline-none focus:bg-primary-container w-48 transition-all" placeholder="SEARCH SESSION..." type="text"/>
+</div>
+<button class="p-2 border-2 border-primary hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined block">notifications</span>
+</button>
+<button class="p-2 border-2 border-primary hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined block">settings</span>
+</button>
+<div class="w-10 h-10 border-2 border-primary overflow-hidden">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="Close up of a professional driver headshot" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOJCd5BA0A6Zmug5hBpiH7jc7cUzs2Kx-DPxl0TunOaMbIqbia6Thk7c66PklLVUYpj1oueLH8qMb1t9Ylm6Y633vVIzoJJv-olIoV30VqSbvl-DPliAhfQd5BZyqNIZTxM1roG9HluY7I4cb-9H4pccZYNtH4Y8Elq1RgTGqHF2R1eANL90cs7f1COrpuQhGfpY-6KqOxTQxD6Cv5HhnPsqJChlORu2Xan7IlWYstKVwbjGGw-NXrpmzyrDr3qNqPhZKj20LFug"/>
+</div>
+</div>
+</header>
+<div class="flex">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-[#f5f0e8] border-r-4 border-[#1a1a1a] flex flex-col pt-24 pb-10 overflow-y-auto z-40 scrollbar-hide hidden lg:flex">
+<div class="px-6 mb-6">
+<h2 class="text-xl font-black border-b-2 border-[#1a1a1a] mb-1 font-headline">GRAND PRIX</h2>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase font-headline">LIVE TELEMETRY • SESSION ID: 9142</p>
+</div>
+<nav class="flex flex-col">
+<a class="text-[#1a1a1a] p-3 mx-2 flex items-center gap-3 hover:bg-[#0055ff] hover:text-white font-headline font-bold text-sm uppercase transition-transform hover:skew-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span> Dashboard
+                </a>
+<a class="text-[#1a1a1a] p-3 mx-2 flex items-center gap-3 hover:bg-[#0055ff] hover:text-white font-headline font-bold text-sm uppercase transition-transform hover:skew-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="timer">timer</span> Lap Times
+                </a>
+<a class="text-[#1a1a1a] p-3 mx-2 flex items-center gap-3 hover:bg-[#0055ff] hover:text-white font-headline font-bold text-sm uppercase transition-transform hover:skew-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="insights">insights</span> Telemetry
+                </a>
+<a class="bg-[#ffcc00] text-[#1a1a1a] border-2 border-[#1a1a1a] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] my-1 mx-2 p-3 flex items-center gap-3 font-headline font-bold text-sm uppercase transition-transform hover:skew-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span> Strategy
+                </a>
+<a class="text-[#1a1a1a] p-3 mx-2 flex items-center gap-3 hover:bg-[#0055ff] hover:text-white font-headline font-bold text-sm uppercase transition-transform hover:skew-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span> Standings
+                </a>
+<a class="text-[#1a1a1a] p-3 mx-2 flex items-center gap-3 hover:bg-[#0055ff] hover:text-white font-headline font-bold text-sm uppercase transition-transform hover:skew-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="moped">moped</span> Pit Stops
+                </a>
+<a class="text-[#1a1a1a] p-3 mx-2 flex items-center gap-3 hover:bg-[#0055ff] hover:text-white font-headline font-bold text-sm uppercase transition-transform hover:skew-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="map">map</span> Track Positions
+                </a>
+</nav>
+<div class="mt-auto px-4">
+<button class="w-full bg-[#e63b2e] text-white font-black py-4 border-2 border-primary neo-shadow-sm uppercase font-headline tracking-widest hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all">
+                    WATCH LIVE
+                </button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 lg:ml-64 p-8">
+<!-- Page Header / Alert -->
+<div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<span class="bg-tertiary text-white px-3 py-1 text-xs font-black uppercase font-headline">Session Live</span>
+<h2 class="text-6xl font-black font-headline uppercase tracking-tighter mt-2">Race Strategy</h2>
+<p class="text-xl font-bold font-headline text-on-surface-variant">2024 SAUDI ARABIAN GRAND PRIX • LAP 34/50</p>
+</div>
+<div class="bg-primary-container border-4 border-primary p-6 neo-shadow max-w-sm">
+<h3 class="font-black font-headline text-lg uppercase mb-1">PIT WINDOW OPEN: LAP 18-24</h3>
+<p class="font-bold text-xs">Projected undercut advantage: -0.850s. High degradation observed on Soft compounds.</p>
+</div>
+</div>
+<!-- Tire Compound Timeline -->
+<section class="mb-12">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-2xl font-black font-headline uppercase border-l-8 border-primary pl-4">Tire Life &amp; Stints</h3>
+<div class="flex gap-4 font-headline font-bold text-xs uppercase">
+<div class="flex items-center gap-2"><span class="w-3 h-3 bg-secondary border border-primary"></span> Soft</div>
+<div class="flex items-center gap-2"><span class="w-3 h-3 bg-primary-container border border-primary"></span> Medium</div>
+<div class="flex items-center gap-2"><span class="w-3 h-3 bg-white border border-primary"></span> Hard</div>
+</div>
+</div>
+<div class="bg-surface-container border-4 border-primary p-6 neo-shadow overflow-x-auto scrollbar-hide">
+<div class="min-w-[800px] space-y-4">
+<!-- Driver Timeline Row -->
+<div class="flex items-center gap-4">
+<div class="w-24 font-black font-headline text-xl italic shrink-0">VER <span class="text-xs not-italic text-on-surface-variant">#1</span></div>
+<div class="flex-1 h-8 flex border-2 border-primary overflow-hidden">
+<div class="w-[30%] bg-primary-container border-r-2 border-primary flex items-center justify-center text-[10px] font-black">STINT 1 (18 LAPS)</div>
+<div class="w-[70%] bg-white flex items-center justify-center text-[10px] font-black">STINT 2 (32 LAPS)</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-24 font-black font-headline text-xl italic shrink-0">PER <span class="text-xs not-italic text-on-surface-variant">#11</span></div>
+<div class="flex-1 h-8 flex border-2 border-primary overflow-hidden">
+<div class="w-[30%] bg-primary-container border-r-2 border-primary flex items-center justify-center text-[10px] font-black">STINT 1 (18 LAPS)</div>
+<div class="w-[70%] bg-white flex items-center justify-center text-[10px] font-black">STINT 2 (32 LAPS)</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-24 font-black font-headline text-xl italic shrink-0">LEC <span class="text-xs not-italic text-on-surface-variant">#16</span></div>
+<div class="flex-1 h-8 flex border-2 border-primary overflow-hidden">
+<div class="w-[25%] bg-primary-container border-r-2 border-primary flex items-center justify-center text-[10px] font-black">STINT 1 (15 LAPS)</div>
+<div class="w-[75%] bg-white flex items-center justify-center text-[10px] font-black">STINT 2 (35 LAPS)</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-24 font-black font-headline text-xl italic shrink-0">HAM <span class="text-xs not-italic text-on-surface-variant">#44</span></div>
+<div class="flex-1 h-8 flex border-2 border-primary overflow-hidden">
+<div class="w-[35%] bg-primary-container border-r-2 border-primary flex items-center justify-center text-[10px] font-black">STINT 1 (22 LAPS)</div>
+<div class="w-[45%] bg-white border-r-2 border-primary flex items-center justify-center text-[10px] font-black">STINT 2 (28 LAPS)</div>
+<div class="w-[20%] bg-secondary flex items-center justify-center text-[10px] font-black text-white">STINT 3</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-24 font-black font-headline text-xl italic shrink-0">NOR <span class="text-xs not-italic text-on-surface-variant">#4</span></div>
+<div class="flex-1 h-8 flex border-2 border-primary overflow-hidden">
+<div class="w-[40%] bg-primary-container border-r-2 border-primary flex items-center justify-center text-[10px] font-black">STINT 1 (25 LAPS)</div>
+<div class="w-[60%] bg-secondary flex items-center justify-center text-[10px] font-black text-white">STINT 2 (30 LAPS)</div>
+</div>
+</div>
+</div>
+<!-- Legend X-Axis -->
+<div class="min-w-[800px] flex ml-28 mt-2 justify-between font-headline font-bold text-[10px] text-on-surface-variant">
+<span>LAP 0</span>
+<span>LAP 10</span>
+<span>LAP 20</span>
+<span>LAP 30</span>
+<span>LAP 40</span>
+<span>LAP 50</span>
+</div>
+</div>
+</section>
+<!-- Grid Layout for Tables -->
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+<!-- Stint Details Table -->
+<div class="flex flex-col">
+<h3 class="text-2xl font-black font-headline uppercase mb-4 border-l-8 border-tertiary pl-4">Live Stint Analytics</h3>
+<div class="bg-white border-4 border-primary neo-shadow overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-primary text-white font-headline uppercase text-xs">
+<th class="p-4 border-b-2 border-primary">Driver</th>
+<th class="p-4 border-b-2 border-primary">Stint</th>
+<th class="p-4 border-b-2 border-primary">Compound</th>
+<th class="p-4 border-b-2 border-primary text-center">Laps</th>
+<th class="p-4 border-b-2 border-primary text-right">Avg Pace</th>
+</tr>
+</thead>
+<tbody class="font-headline font-bold text-sm">
+<tr class="border-b-2 border-primary hover:bg-surface-container transition-colors">
+<td class="p-4 italic">VERSTAPPEN</td>
+<td class="p-4">02</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2 py-0.5 border border-primary bg-white text-[10px] uppercase">Hard</span>
+</td>
+<td class="p-4 text-center">16/32</td>
+<td class="p-4 text-right">1:32.441</td>
+</tr>
+<tr class="border-b-2 border-primary hover:bg-surface-container transition-colors">
+<td class="p-4 italic">PEREZ</td>
+<td class="p-4">02</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2 py-0.5 border border-primary bg-white text-[10px] uppercase">Hard</span>
+</td>
+<td class="p-4 text-center">16/32</td>
+<td class="p-4 text-right">1:32.890</td>
+</tr>
+<tr class="border-b-2 border-primary hover:bg-surface-container transition-colors">
+<td class="p-4 italic">LECLERC</td>
+<td class="p-4">02</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2 py-0.5 border border-primary bg-white text-[10px] uppercase">Hard</span>
+</td>
+<td class="p-4 text-center">19/35</td>
+<td class="p-4 text-right">1:32.712</td>
+</tr>
+<tr class="border-b-2 border-primary hover:bg-surface-container transition-colors">
+<td class="p-4 italic">HAMILTON</td>
+<td class="p-4">03</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2 py-0.5 border border-primary bg-secondary text-white text-[10px] uppercase">Soft</span>
+</td>
+<td class="p-4 text-center">02/10</td>
+<td class="p-4 text-right text-secondary font-black">1:31.998</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Pit Stop Summary -->
+<div class="flex flex-col">
+<h3 class="text-2xl font-black font-headline uppercase mb-4 border-l-8 border-secondary pl-4">Pit Stop Performance</h3>
+<div class="bg-white border-4 border-primary neo-shadow overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-primary text-white font-headline uppercase text-xs">
+<th class="p-4 border-b-2 border-primary">Driver</th>
+<th class="p-4 border-b-2 border-primary">Lap</th>
+<th class="p-4 border-b-2 border-primary">Stop Time</th>
+<th class="p-4 border-b-2 border-primary text-right">Lane Time</th>
+</tr>
+</thead>
+<tbody class="font-headline font-bold text-sm">
+<tr class="border-b-2 border-primary hover:bg-surface-container transition-colors">
+<td class="p-4 italic">VERSTAPPEN</td>
+<td class="p-4 text-on-surface-variant">18</td>
+<td class="p-4 text-tertiary">2.41s</td>
+<td class="p-4 text-right">21.88s</td>
+</tr>
+<tr class="border-b-2 border-primary hover:bg-surface-container transition-colors">
+<td class="p-4 italic">PEREZ</td>
+<td class="p-4 text-on-surface-variant">18</td>
+<td class="p-4">2.55s</td>
+<td class="p-4 text-right">22.10s</td>
+</tr>
+<tr class="border-b-2 border-primary hover:bg-surface-container transition-colors">
+<td class="p-4 italic">LECLERC</td>
+<td class="p-4 text-on-surface-variant">15</td>
+<td class="p-4 text-tertiary">2.38s</td>
+<td class="p-4 text-right">21.92s</td>
+</tr>
+<tr class="border-b-2 border-primary hover:bg-surface-container transition-colors">
+<td class="p-4 italic">NORRIS</td>
+<td class="p-4 text-on-surface-variant">25</td>
+<td class="p-4 text-secondary font-black">3.12s</td>
+<td class="p-4 text-right">22.84s</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mt-4 bg-primary text-white p-4 flex items-center justify-between border-2 border-primary">
+<span class="font-headline font-black uppercase text-sm">Fastest Pit Stop (DHL)</span>
+<span class="font-headline font-black text-xl text-primary-container italic">LEC - 2.38s</span>
+</div>
+</div>
+</div>
+<!-- Strategy Simulation / OpenF1 Style -->
+<section class="mt-12">
+<h3 class="text-2xl font-black font-headline uppercase mb-6 border-l-8 border-primary-container pl-4">Strategy Simulation &amp; Deltas</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Delta Card 1 -->
+<div class="bg-surface-container-high border-4 border-primary p-6 neo-shadow">
+<div class="flex items-center justify-between mb-4">
+<span class="text-xs font-black uppercase bg-primary text-white px-2 py-0.5">Medium vs Hard</span>
+<span class="material-symbols-outlined text-secondary">trending_up</span>
+</div>
+<div class="text-4xl font-black font-headline mb-2">+0.420s</div>
+<p class="text-xs font-bold text-on-surface-variant leading-relaxed">Median pace advantage of Medium compound over the last 10 laps across field.</p>
+</div>
+<!-- Delta Card 2 -->
+<div class="bg-surface-container-high border-4 border-primary p-6 neo-shadow">
+<div class="flex items-center justify-between mb-4">
+<span class="text-xs font-black uppercase bg-primary text-white px-2 py-0.5">Degradation</span>
+<span class="material-symbols-outlined text-tertiary">show_chart</span>
+</div>
+<div class="text-4xl font-black font-headline mb-2">0.08s/lap</div>
+<p class="text-xs font-bold text-on-surface-variant leading-relaxed">Estimated performance loss per lap for the Hard compound at current track temps (42°C).</p>
+</div>
+<!-- Delta Card 3 -->
+<div class="bg-surface-container-high border-4 border-primary p-6 neo-shadow">
+<div class="flex items-center justify-between mb-4">
+<span class="text-xs font-black uppercase bg-primary text-white px-2 py-0.5">Pit Loss</span>
+<span class="material-symbols-outlined text-secondary">timer</span>
+</div>
+<div class="text-4xl font-black font-headline mb-2">22.4s</div>
+<p class="text-xs font-bold text-on-surface-variant leading-relaxed">Effective time lost in pit lane under green flag conditions at Jeddah Corniche.</p>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- Responsive Footer Mobile Navigation -->
+<nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-[#f5f0e8] border-t-4 border-[#1a1a1a] flex justify-around p-4 z-50">
+<button class="flex flex-col items-center text-[#1a1a1a]">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-black font-headline uppercase">Dash</span>
+</button>
+<button class="flex flex-col items-center text-[#1a1a1a]">
+<span class="material-symbols-outlined">insights</span>
+<span class="text-[10px] font-black font-headline uppercase">Tele</span>
+</button>
+<button class="flex flex-col items-center text-[#e63b2e]">
+<span class="material-symbols-outlined">query_stats</span>
+<span class="text-[10px] font-black font-headline uppercase">Strat</span>
+</button>
+<button class="flex flex-col items-center text-[#1a1a1a]">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="text-[10px] font-black font-headline uppercase">Rank</span>
+</button>
+</nav>
+</body></html>

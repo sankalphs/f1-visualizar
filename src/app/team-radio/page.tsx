@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { f1Api } from "@/lib/api/f1";
 import { useSession } from "@/components/dashboard/SessionSelector";
 import { SessionSelector } from "@/components/dashboard/SessionSelector";
-import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { MessageSquare } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -44,29 +43,29 @@ export default function TeamRadioPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-100">
-            <MessageSquare className="mr-2 inline" size={24} />
+          <span className="font-headline font-black uppercase text-xs tracking-tighter text-nb-text-muted">
+            <MessageSquare className="mr-1 inline" size={14} />
+            Comms
+          </span>
+          <h1 className="text-5xl md:text-7xl font-black font-headline uppercase tracking-tighter mt-2 leading-none text-nb-text">
             Team Radio
           </h1>
-          <p className="text-sm text-zinc-500">
-            Driver-to-pit communications
-          </p>
         </div>
         <SessionSelector />
       </div>
 
       {/* Driver Filter */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Filter by Driver</CardTitle>
-        </CardHeader>
-        <div className="flex flex-wrap gap-2">
+      <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+        <div className="bg-nb-primary text-white p-4">
+          <h2 className="font-headline font-black uppercase text-sm tracking-tighter">Filter by Driver</h2>
+        </div>
+        <div className="flex flex-wrap gap-2 p-4">
           <button
             onClick={() => setSelectedDriver(null)}
-            className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
+            className={`border-2 border-nb-primary font-headline font-black uppercase text-[10px] px-3 py-1.5 transition-colors ${
               selectedDriver === null
-                ? "border-red-600 bg-red-600/20 text-red-400"
-                : "border-zinc-700 bg-zinc-800 text-zinc-400 hover:border-zinc-600"
+                ? "bg-nb-red text-white"
+                : "bg-nb-surface-dim text-nb-text hover:bg-nb-yellow/20"
             }`}
           >
             All ({radio.length})
@@ -77,14 +76,14 @@ export default function TeamRadioPage() {
               <button
                 key={dn}
                 onClick={() => setSelectedDriver(dn)}
-                className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
+                className={`border-2 border-nb-primary font-headline font-black uppercase text-[10px] px-3 py-1.5 transition-colors flex items-center gap-1.5 ${
                   selectedDriver === dn
-                    ? "border-red-600 bg-red-600/20 text-red-400"
-                    : "border-zinc-700 bg-zinc-800 text-zinc-400 hover:border-zinc-600"
+                    ? "bg-nb-red text-white"
+                    : "bg-nb-surface-dim text-nb-text hover:bg-nb-yellow/20"
                 }`}
               >
                 <span
-                  className="mr-1.5 inline-block h-2 w-2 rounded-full"
+                  className="inline-block w-1 h-4"
                   style={{ backgroundColor: `#${driver?.team_colour || "888"}` }}
                 />
                 {driver?.name_acronym || `#${dn}`} ({count})
@@ -92,17 +91,17 @@ export default function TeamRadioPage() {
             );
           })}
         </div>
-      </Card>
+      </div>
 
       {/* Radio List */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Radio Messages ({radio.length})</CardTitle>
-        </CardHeader>
+      <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+        <div className="bg-nb-primary text-white p-4">
+          <h2 className="font-headline font-black uppercase text-sm tracking-tighter">Radio Messages ({radio.length})</h2>
+        </div>
         {isLoading ? (
           <Skeleton className="h-64 w-full" />
         ) : radio.length > 0 ? (
-          <div className="max-h-[600px] space-y-3 overflow-y-auto">
+          <div className="max-h-[600px] space-y-2 overflow-y-auto p-3">
             {radio
               .slice()
               .reverse()
@@ -111,16 +110,16 @@ export default function TeamRadioPage() {
                 return (
                   <div
                     key={idx}
-                    className="flex items-center gap-4 rounded-lg border border-zinc-800/50 bg-zinc-900/30 p-3"
+                    className="flex items-center gap-4 border-2 border-nb-primary bg-nb-surface-dim p-3"
                   >
                     <div className="flex items-center gap-2">
                       <span
-                        className="inline-block h-3 w-3 rounded-full"
+                        className="inline-block w-1 h-6"
                         style={{
                           backgroundColor: `#${driver?.team_colour || "888"}`,
                         }}
                       />
-                      <span className="text-sm font-medium">
+                      <span className="text-sm font-headline font-bold text-nb-text">
                         {driver?.name_acronym || `#${r.driver_number}`}
                       </span>
                     </div>
@@ -129,7 +128,7 @@ export default function TeamRadioPage() {
                         <source src={r.recording_url} type="audio/mp3" />
                       </audio>
                     </div>
-                    <span className="text-xs text-zinc-500">
+                    <span className="text-xs font-headline font-bold text-nb-text-muted">
                       {r.date ? new Date(r.date).toLocaleTimeString() : "--"}
                     </span>
                   </div>
@@ -137,11 +136,11 @@ export default function TeamRadioPage() {
               })}
           </div>
         ) : (
-          <p className="py-8 text-center text-sm text-zinc-500">
+          <p className="py-8 text-center text-sm font-headline font-bold text-nb-text-muted">
             No radio messages available for this session
           </p>
         )}
-      </Card>
+      </div>
     </div>
   );
 }

@@ -4,8 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { f1Api } from "@/lib/api/f1";
 import { useSession } from "@/components/dashboard/SessionSelector";
 import { SessionSelector } from "@/components/dashboard/SessionSelector";
-import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { ShieldAlert } from "lucide-react";
 import { useMemo } from "react";
@@ -37,17 +35,24 @@ export default function RaceControlPage() {
     return map;
   }, [events]);
 
+  const getFlagVariant = (flag: string | null) => {
+    if (flag === "YELLOW" || flag === "DOUBLE YELLOW") return "bg-nb-yellow text-nb-text";
+    if (flag === "RED") return "bg-nb-red text-white";
+    if (flag === "GREEN") return "bg-emerald-500 text-white";
+    return "bg-nb-surface-dim text-nb-text";
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-100">
-            <ShieldAlert className="mr-2 inline" size={24} />
+          <span className="font-headline font-black uppercase text-xs tracking-tighter text-nb-text-muted">
+            <ShieldAlert className="mr-1 inline" size={14} />
+            Control
+          </span>
+          <h1 className="text-5xl md:text-7xl font-black font-headline uppercase tracking-tighter mt-2 leading-none text-nb-text">
             Race Control
           </h1>
-          <p className="text-sm text-zinc-500">
-            Session status, flags, incidents, and safety car
-          </p>
         </div>
         <SessionSelector />
       </div>
@@ -55,22 +60,22 @@ export default function RaceControlPage() {
       {/* Category Stats */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
         {Array.from(categoryStats.entries()).map(([cat, count]) => (
-          <Card key={cat} className="p-3">
-            <p className="text-xs text-zinc-500">{cat}</p>
-            <p className="text-lg font-bold text-zinc-100">{count}</p>
-          </Card>
+          <div key={cat} className="border-4 border-nb-primary bg-nb-surface neo-shadow-sm p-3">
+            <p className="text-xs font-headline font-bold uppercase text-nb-text-muted">{cat}</p>
+            <p className="text-lg font-headline font-black text-nb-text">{count}</p>
+          </div>
         ))}
       </div>
 
       {/* All Events */}
-      <Card>
-        <CardHeader>
-          <CardTitle>All Events ({events.length})</CardTitle>
-        </CardHeader>
+      <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+        <div className="bg-nb-primary text-white p-4">
+          <h2 className="font-headline font-black uppercase text-sm tracking-tighter">All Events ({events.length})</h2>
+        </div>
         {isLoading ? (
           <Skeleton className="h-64 w-full" />
         ) : (
-          <div className="max-h-[600px] space-y-2 overflow-y-auto">
+          <div className="max-h-[600px] space-y-2 overflow-y-auto p-3">
             {events
               .slice()
               .reverse()
@@ -81,26 +86,16 @@ export default function RaceControlPage() {
                 return (
                   <div
                     key={idx}
-                    className="flex items-start gap-3 rounded-lg border border-zinc-800/50 bg-zinc-900/30 p-3"
+                    className="flex items-start gap-3 border-2 border-nb-primary bg-nb-surface-dim p-3"
                   >
                     <div className="flex-shrink-0">
-                      <Badge
-                        variant={
-                          event.flag === "YELLOW" || event.flag === "DOUBLE YELLOW"
-                            ? "warning"
-                            : event.flag === "RED"
-                              ? "danger"
-                              : event.flag === "GREEN"
-                                ? "success"
-                                : "default"
-                        }
-                      >
+                      <span className={`border-2 border-nb-primary font-headline font-black uppercase text-[10px] px-2 py-0.5 ${getFlagVariant(event.flag)}`}>
                         {event.flag || event.category}
-                      </Badge>
+                      </span>
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm text-zinc-200">{event.message}</p>
-                      <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
+                      <p className="text-sm font-headline font-bold text-nb-text">{event.message}</p>
+                      <div className="mt-1 flex flex-wrap items-center gap-2 text-xs font-headline font-bold text-nb-text-muted">
                         <span>{event.date ? new Date(event.date).toLocaleTimeString() : "--"}</span>
                         {event.scope && <span>Scope: {event.scope}</span>}
                         {event.sector && <span>Sector: {event.sector}</span>}
@@ -108,7 +103,7 @@ export default function RaceControlPage() {
                         {driver && (
                           <span className="flex items-center gap-1">
                             <span
-                              className="inline-block h-2 w-2 rounded-full"
+                              className="inline-block w-1 h-4"
                               style={{
                                 backgroundColor: `#${driver.team_colour}`,
                               }}
@@ -123,7 +118,7 @@ export default function RaceControlPage() {
               })}
           </div>
         )}
-      </Card>
+      </div>
     </div>
   );
 }

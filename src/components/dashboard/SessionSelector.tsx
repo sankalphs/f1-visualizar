@@ -4,7 +4,7 @@ import { useState, createContext, useContext, useCallback, useEffect } from "rea
 import { useQuery } from "@tanstack/react-query";
 import { f1Api } from "@/lib/api/f1";
 import type { Meeting, Session } from "@/lib/types/f1";
-import { ChevronDown, Calendar } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 interface SessionContextType {
   meetingKey: number | string;
@@ -95,30 +95,13 @@ export function SessionSelector() {
     session,
   } = useSession();
 
-  const raceDate = session
-    ? new Date(session.date_start).toLocaleDateString("en-US", {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      })
-    : null;
-
-  const raceTime = session
-    ? new Date(session.date_start).toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZoneName: "short",
-      })
-    : null;
-
   return (
     <div className="flex flex-wrap items-center gap-3">
       <div className="relative">
         <select
           value={String(meetingKey)}
           onChange={(e) => setMeetingKey(e.target.value)}
-          className="appearance-none rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 pr-8 text-sm text-zinc-200 focus:border-red-500 focus:outline-none"
+          className="appearance-none border-2 border-nb-primary bg-nb-surface px-3 py-1.5 pr-7 text-xs font-headline font-bold uppercase text-nb-text focus:border-nb-blue focus:outline-none"
         >
           <option value="latest">Latest Meeting</option>
           {meetings.map((m) => (
@@ -128,8 +111,8 @@ export function SessionSelector() {
           ))}
         </select>
         <ChevronDown
-          size={14}
-          className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500"
+          size={12}
+          className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-nb-text-muted"
         />
       </div>
 
@@ -137,7 +120,7 @@ export function SessionSelector() {
         <select
           value={String(sessionKey)}
           onChange={(e) => setSessionKey(Number(e.target.value) || e.target.value)}
-          className="appearance-none rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 pr-8 text-sm text-zinc-200 focus:border-red-500 focus:outline-none"
+          className="appearance-none border-2 border-nb-primary bg-nb-surface px-3 py-1.5 pr-7 text-xs font-headline font-bold uppercase text-nb-text focus:border-nb-blue focus:outline-none"
         >
           {meetingKey === "latest" && (
             <option value="latest">Latest Session</option>
@@ -149,32 +132,22 @@ export function SessionSelector() {
           ))}
         </select>
         <ChevronDown
-          size={14}
-          className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500"
+          size={12}
+          className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-nb-text-muted"
         />
       </div>
 
       {meeting && (
-        <div className="flex items-center gap-2 text-xs text-zinc-500">
+        <div className="hidden lg:flex items-center gap-2 text-[10px] font-headline font-bold uppercase text-nb-text-muted">
           <img
             src={meeting.country_flag}
             alt={meeting.country_name}
-            className="h-4 w-6 rounded object-cover"
+            className="h-3 w-5 object-cover border border-nb-primary"
             onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
           />
           <span>
-            {meeting.circuit_short_name} &middot; {meeting.location},{" "}
-            {meeting.country_name}
+            {meeting.circuit_short_name} &middot; {meeting.location}
           </span>
-        </div>
-      )}
-
-      {raceDate && session && (
-        <div className="flex items-center gap-1.5 text-xs text-zinc-400">
-          <Calendar size={12} className="text-red-400" />
-          <span className="font-medium text-zinc-300">{session.session_name}</span>
-          <span>{raceDate}</span>
-          {raceTime && <span className="text-zinc-500">{raceTime}</span>}
         </div>
       )}
     </div>

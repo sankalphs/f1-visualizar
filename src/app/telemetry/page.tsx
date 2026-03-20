@@ -3,22 +3,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { f1Api } from "@/lib/api/f1";
 import { useSession } from "@/components/dashboard/SessionSelector";
-import { SessionSelector } from "@/components/dashboard/SessionSelector";
-import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { Gauge } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
-  AreaChart,
-  Area,
+  LineChart,
+  Line,
 } from "recharts";
 
 export default function TelemetryPage() {
@@ -77,7 +73,7 @@ export default function TelemetryPage() {
     return points;
   }, [carData]);
 
-  const colors = ["#e10600", "#3671C6", "#FF8700", "#00D2BE", "#27F4D2"];
+  const colors = ["#e63b2e", "#0055ff", "#ffcc00", "#00d2be", "#1a1a1a"];
 
   const toggleDriver = (num: number) => {
     setSelectedDrivers((prev) =>
@@ -86,34 +82,35 @@ export default function TelemetryPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-100">
-            <Gauge className="mr-2 inline" size={24} />
+          <span className="bg-nb-primary text-white px-3 py-1 text-xs font-black uppercase font-headline">
+            Car Data
+          </span>
+          <h1 className="text-5xl md:text-7xl font-black font-headline uppercase tracking-tighter mt-2 leading-none">
             Telemetry
           </h1>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm font-bold font-headline text-nb-text-muted uppercase mt-1">
             Real-time car data: speed, throttle, brake, RPM, gear
           </p>
         </div>
-        <SessionSelector />
       </div>
 
       {/* Driver Selection */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Select Drivers</CardTitle>
-        </CardHeader>
-        <div className="flex flex-wrap gap-2">
+      <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+        <div className="bg-nb-primary text-white p-4 font-headline font-black uppercase tracking-tighter">
+          SELECT DRIVERS
+        </div>
+        <div className="p-4 flex flex-wrap gap-2">
           {drivers.map((d) => (
             <button
               key={d.driver_number}
               onClick={() => toggleDriver(d.driver_number)}
-              className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
+              className={`border-2 border-nb-primary px-3 py-1.5 text-xs font-headline font-bold uppercase transition-all ${
                 selectedDrivers.includes(d.driver_number)
-                  ? "border-red-600 bg-red-600/20 text-red-400"
-                  : "border-zinc-700 bg-zinc-800 text-zinc-400 hover:border-zinc-600"
+                  ? "bg-nb-yellow text-nb-primary shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]"
+                  : "bg-nb-surface text-nb-text hover:bg-nb-blue hover:text-white"
               }`}
               style={{
                 borderColor: selectedDrivers.includes(d.driver_number)
@@ -122,74 +119,72 @@ export default function TelemetryPage() {
               }}
             >
               <span
-                className="mr-1.5 inline-block h-2 w-2 rounded-full"
+                className="mr-1.5 inline-block h-2 w-2"
                 style={{ backgroundColor: `#${d.team_colour || "888"}` }}
               />
               {d.name_acronym || `#${d.driver_number}`}
             </button>
           ))}
         </div>
-      </Card>
+      </div>
 
+      {/* Charts */}
       {isLoading ? (
         <Skeleton className="h-96 w-full" />
       ) : (
-        <div className="grid grid-cols-1 gap-6">
-          {/* Speed */}
+        <div className="space-y-6">
           <TelemetryChart
-            title="Speed (km/h)"
+            title="VELOCITY"
+            unit="KM/H"
             data={chartData}
             selectedDrivers={selectedDrivers}
             driverMap={driverMap}
             colors={colors}
             dataKeyPrefix="speed"
-            unit="km/h"
           />
-
-          {/* Throttle */}
-          <TelemetryChart
-            title="Throttle (%)"
-            data={chartData}
-            selectedDrivers={selectedDrivers}
-            driverMap={driverMap}
-            colors={colors}
-            dataKeyPrefix="throttle"
-            unit="%"
-          />
-
-          {/* Brake */}
-          <TelemetryChart
-            title="Brake"
-            data={chartData}
-            selectedDrivers={selectedDrivers}
-            driverMap={driverMap}
-            colors={colors}
-            dataKeyPrefix="brake"
-            unit=""
-          />
-
-          {/* RPM */}
-          <TelemetryChart
-            title="RPM"
-            data={chartData}
-            selectedDrivers={selectedDrivers}
-            driverMap={driverMap}
-            colors={colors}
-            dataKeyPrefix="rpm"
-            unit="rpm"
-          />
-
-          {/* Gear */}
-          <TelemetryChart
-            title="Gear"
-            data={chartData}
-            selectedDrivers={selectedDrivers}
-            driverMap={driverMap}
-            colors={colors}
-            dataKeyPrefix="gear"
-            unit=""
-            isStep
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <TelemetryChart
+              title="THROTTLE %"
+              unit="%"
+              data={chartData}
+              selectedDrivers={selectedDrivers}
+              driverMap={driverMap}
+              colors={colors}
+              dataKeyPrefix="throttle"
+              small
+            />
+            <TelemetryChart
+              title="BRAKE"
+              unit=""
+              data={chartData}
+              selectedDrivers={selectedDrivers}
+              driverMap={driverMap}
+              colors={colors}
+              dataKeyPrefix="brake"
+              small
+            />
+            <TelemetryChart
+              title="RPM"
+              unit="rpm"
+              data={chartData}
+              selectedDrivers={selectedDrivers}
+              driverMap={driverMap}
+              colors={colors}
+              dataKeyPrefix="rpm"
+              small
+            />
+            <TelemetryChart
+              title="GEAR"
+              unit=""
+              data={chartData}
+              selectedDrivers={selectedDrivers}
+              driverMap={driverMap}
+              colors={colors}
+              dataKeyPrefix="gear"
+              small
+              isStep
+            />
+          </div>
         </div>
       )}
     </div>
@@ -198,40 +193,53 @@ export default function TelemetryPage() {
 
 function TelemetryChart({
   title,
+  unit,
   data,
   selectedDrivers,
   driverMap,
   colors,
   dataKeyPrefix,
-  unit,
+  small,
   isStep,
 }: {
   title: string;
+  unit: string;
   data: Record<string, unknown>[];
   selectedDrivers: number[];
   driverMap: Map<number, { name_acronym: string; team_colour: string }>;
   colors: string[];
   dataKeyPrefix: string;
-  unit: string;
+  small?: boolean;
   isStep?: boolean;
 }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-      </CardHeader>
-      <div className="h-64 w-full">
+    <div className="border-4 border-nb-primary bg-nb-primary p-4 md:p-6 relative">
+      <div className="absolute top-4 right-6 flex gap-4 text-[10px] font-headline font-black uppercase">
+        {selectedDrivers.map((dn, i) => (
+          <div key={dn} className="flex items-center gap-2" style={{ color: colors[i % colors.length] }}>
+            <span className="w-3 h-0.5" style={{ backgroundColor: colors[i % colors.length] }} />
+            {driverMap.get(dn)?.name_acronym || `#${dn}`}
+          </div>
+        ))}
+      </div>
+      <div className="mb-3">
+        <h3 className="text-white font-headline font-black text-lg italic uppercase tracking-tighter">
+          {title}{" "}
+          {unit && <span className="text-xs font-normal not-italic text-zinc-400">{unit}</span>}
+        </h3>
+      </div>
+      <div className={`${small ? "h-32" : "h-64"} telemetry-grid relative overflow-hidden border-b-2 border-zinc-700`}>
         <ResponsiveContainer width="100%" height="100%">
           {isStep ? (
             <LineChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
-              <XAxis dataKey="index" tick={{ fill: "#71717a", fontSize: 11 }} />
-              <YAxis tick={{ fill: "#71717a", fontSize: 11 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+              <XAxis dataKey="index" tick={{ fill: "#666", fontSize: 10 }} />
+              <YAxis tick={{ fill: "#666", fontSize: 10 }} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#18181b",
-                  border: "1px solid #3f3f46",
-                  borderRadius: "8px",
+                  backgroundColor: "#1a1a1a",
+                  border: "2px solid #ffcc00",
+                  borderRadius: 0,
                 }}
               />
               {selectedDrivers.map((dn, i) => (
@@ -240,7 +248,7 @@ function TelemetryChart({
                   type="stepAfter"
                   dataKey={`${dataKeyPrefix}_${dn}`}
                   stroke={colors[i % colors.length]}
-                  strokeWidth={1.5}
+                  strokeWidth={2}
                   dot={false}
                   name={driverMap.get(dn)?.name_acronym || `#${dn}`}
                 />
@@ -248,18 +256,17 @@ function TelemetryChart({
             </LineChart>
           ) : (
             <AreaChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
-              <XAxis dataKey="index" tick={{ fill: "#71717a", fontSize: 11 }} />
-              <YAxis tick={{ fill: "#71717a", fontSize: 11 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+              <XAxis dataKey="index" tick={{ fill: "#666", fontSize: 10 }} />
+              <YAxis tick={{ fill: "#666", fontSize: 10 }} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#18181b",
-                  border: "1px solid #3f3f46",
-                  borderRadius: "8px",
+                  backgroundColor: "#1a1a1a",
+                  border: "2px solid #ffcc00",
+                  borderRadius: 0,
                 }}
                 formatter={(value) => [`${value} ${unit}`, ""]}
               />
-              <Legend />
               {selectedDrivers.map((dn, i) => (
                 <Area
                   key={dn}
@@ -267,8 +274,8 @@ function TelemetryChart({
                   dataKey={`${dataKeyPrefix}_${dn}`}
                   stroke={colors[i % colors.length]}
                   fill={colors[i % colors.length]}
-                  fillOpacity={0.1}
-                  strokeWidth={1.5}
+                  fillOpacity={0.15}
+                  strokeWidth={2}
                   dot={false}
                   name={driverMap.get(dn)?.name_acronym || `#${dn}`}
                 />
@@ -277,6 +284,6 @@ function TelemetryChart({
           )}
         </ResponsiveContainer>
       </div>
-    </Card>
+    </div>
   );
 }

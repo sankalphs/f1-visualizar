@@ -4,10 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { f1Api } from "@/lib/api/f1";
 import { useSession } from "@/components/dashboard/SessionSelector";
 import { SessionSelector } from "@/components/dashboard/SessionSelector";
-import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { MapPin } from "lucide-react";
+import { MapPin, Radio } from "lucide-react";
 import { useMemo, useState, useRef, useEffect } from "react";
 import type { Location, Driver } from "@/lib/types/f1";
 
@@ -111,20 +110,30 @@ export default function PositionsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      {/* Page Header */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-100">
-            <MapPin className="mr-2 inline" size={24} />
+          <div className="flex items-center gap-3 mb-1">
+            <span className="bg-nb-primary text-white px-3 py-1 text-xs font-black uppercase font-headline inline-flex items-center gap-1.5">
+              <Radio size={12} className="live-dot" />
+              LIVE
+            </span>
+            <span className="text-nb-text-muted text-xs font-bold uppercase tracking-widest font-headline">
+              Auto-refresh 3s
+            </span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-black text-nb-text font-headline uppercase tracking-tighter">
+            <MapPin className="mr-2 inline" size={28} />
             Track Positions
           </h1>
-          <p className="text-sm text-zinc-500">
-            Live driver positions on track (auto-refreshes every 3s)
+          <p className="text-sm text-nb-text-muted font-headline font-bold mt-1">
+            Live driver positions on track &mdash; {latestLocationPerDriver.size} drivers detected
           </p>
         </div>
         <div className="flex items-center gap-3">
           <button
             onClick={handleRefresh}
-            className="rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-700"
+            className="border-4 border-nb-primary bg-nb-surface px-4 py-2 font-headline font-bold text-sm uppercase text-nb-text neo-shadow hover:bg-nb-yellow hover:text-nb-primary transition-colors"
           >
             Refresh
           </button>
@@ -133,12 +142,16 @@ export default function PositionsPage() {
       </div>
 
       {/* Track Map */}
-      <Card className="p-0 overflow-hidden">
-        <CardHeader className="px-4 pt-4">
-          <CardTitle>
-            Track Map ({latestLocationPerDriver.size} drivers)
-          </CardTitle>
-        </CardHeader>
+      <div className="border-4 border-nb-primary bg-nb-primary neo-shadow-lg overflow-hidden">
+        <div className="px-4 py-3 border-b-4 border-nb-primary bg-nb-primary text-white flex items-center justify-between">
+          <h3 className="text-lg font-black font-headline uppercase tracking-tighter flex items-center gap-2">
+            <MapPin size={18} />
+            Track Map
+            <span className="bg-nb-yellow text-nb-primary text-xs px-2 py-0.5 font-black">
+              {latestLocationPerDriver.size} DRIVERS
+            </span>
+          </h3>
+        </div>
         {isLoading && sortedDrivers.length === 0 ? (
           <Skeleton className="h-[500px] w-full" />
         ) : (
@@ -159,7 +172,7 @@ export default function PositionsPage() {
                     })
                     .join(" ")}
                   fill="none"
-                  stroke="#27272a"
+                  stroke="#1a1a1a"
                   strokeWidth="40"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -175,16 +188,18 @@ export default function PositionsPage() {
                     y1={(dimensions.height / 10) * i}
                     x2={dimensions.width}
                     y2={(dimensions.height / 10) * i}
-                    stroke="#1f1f23"
+                    stroke="#1a1a1a"
                     strokeWidth="0.5"
+                    opacity={0.15}
                   />
                   <line
                     x1={(dimensions.width / 10) * i}
                     y1={0}
                     x2={(dimensions.width / 10) * i}
                     y2={dimensions.height}
-                    stroke="#1f1f23"
+                    stroke="#1a1a1a"
                     strokeWidth="0.5"
+                    opacity={0.15}
                   />
                 </g>
               ))}
@@ -195,42 +210,70 @@ export default function PositionsPage() {
                 const color = `#${driver?.team_colour || "888"}`;
                 return (
                   <g key={driverNumber}>
-                    {/* Glow effect */}
+                    {/* Team color ring */}
                     <circle
                       cx={sx}
                       cy={sy}
                       r={14}
-                      fill={color}
-                      opacity={0.2}
+                      fill="none"
+                      stroke={color}
+                      strokeWidth="3"
+                      strokeDasharray="4 2"
                     />
-                    {/* Main dot */}
+                    {/* Main dot — black fill, team-color stroke */}
                     <circle
                       cx={sx}
                       cy={sy}
                       r={9}
-                      fill={color}
-                      stroke="#0a0a0a"
-                      strokeWidth="2"
+                      fill="#1a1a1a"
+                      stroke={color}
+                      strokeWidth="3"
                     />
-                    {/* Driver number label */}
+                    {/* Position number inside dot */}
                     <text
                       x={sx}
-                      y={sy + 24}
+                      y={sy + 1}
                       textAnchor="middle"
-                      fill="#a1a1aa"
+                      dominantBaseline="central"
+                      fill="#ffffff"
+                      fontSize="8"
+                      fontWeight="900"
+                      fontFamily="'Space Grotesk', sans-serif"
+                    >
+                      {position}
+                    </text>
+                    {/* Driver acronym label */}
+                    <text
+                      x={sx}
+                      y={sy + 26}
+                      textAnchor="middle"
+                      fill="#1a1a1a"
                       fontSize="10"
-                      fontWeight="bold"
+                      fontWeight="900"
+                      fontFamily="'Space Grotesk', sans-serif"
+                      style={{ textTransform: "uppercase" }}
                     >
                       {driver?.name_acronym || `#${driverNumber}`}
                     </text>
-                    {/* Position badge */}
+                    {/* Position badge above */}
+                    <rect
+                      x={sx - 14}
+                      y={sy - 28}
+                      width={28}
+                      height={14}
+                      fill="#1a1a1a"
+                      stroke="#1a1a1a"
+                      strokeWidth="1"
+                    />
                     <text
                       x={sx}
-                      y={sy - 16}
+                      y={sy - 19}
                       textAnchor="middle"
-                      fill="#e4e4e7"
-                      fontSize="9"
-                      fontWeight="bold"
+                      dominantBaseline="central"
+                      fill="#ffcc00"
+                      fontSize="8"
+                      fontWeight="900"
+                      fontFamily="'Space Grotesk', sans-serif"
                     >
                       P{position}
                     </text>
@@ -240,51 +283,65 @@ export default function PositionsPage() {
             </svg>
           </div>
         )}
-      </Card>
+      </div>
 
       {/* Position List */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Current Positions</CardTitle>
-        </CardHeader>
+      <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+        <div className="px-4 py-3 border-b-4 border-nb-primary bg-nb-primary text-white flex items-center justify-between">
+          <h3 className="text-lg font-black font-headline uppercase tracking-tighter">
+            Current Positions
+          </h3>
+          <span className="bg-nb-yellow text-nb-primary text-xs px-2 py-0.5 font-black font-headline uppercase">
+            {sortedDrivers.length} RUNNING
+          </span>
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-zinc-800 text-zinc-500">
-                <th className="py-2 text-left font-medium">Pos</th>
-                <th className="py-2 text-left font-medium">Driver</th>
-                <th className="py-2 text-left font-medium">Team</th>
-                <th className="py-2 text-left font-medium">X</th>
-                <th className="py-2 text-left font-medium">Y</th>
-                <th className="py-2 text-left font-medium">Z</th>
-                <th className="py-2 text-left font-medium">Last Update</th>
+              <tr className="bg-nb-surface-dim border-b-2 border-nb-primary font-headline font-black uppercase text-xs text-nb-text">
+                <th className="p-3 border-r-2 border-nb-primary text-left">Pos</th>
+                <th className="p-3 border-r-2 border-nb-primary text-left">Driver</th>
+                <th className="p-3 border-r-2 border-nb-primary text-left">Team</th>
+                <th className="p-3 border-r-2 border-nb-primary text-left">X</th>
+                <th className="p-3 border-r-2 border-nb-primary text-left">Y</th>
+                <th className="p-3 border-r-2 border-nb-primary text-left">Z</th>
+                <th className="p-3 text-left">Last Update</th>
               </tr>
             </thead>
             <tbody>
               {sortedDrivers.map(({ driverNumber, driver, loc, position }) => (
                 <tr
                   key={driverNumber}
-                  className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
+                  className="border-b-2 border-nb-primary hover:bg-nb-yellow/10 transition-colors"
                 >
-                  <td className="py-2.5">
-                    <Badge variant={position <= 3 ? "success" : "default"}>
+                  <td className="p-3 border-r-2 border-nb-primary">
+                    <Badge variant={position <= 3 ? "warning" : "default"}>
                       P{position}
                     </Badge>
                   </td>
-                  <td className="py-2.5 font-medium">
+                  <td className="p-3 border-r-2 border-nb-primary font-headline font-bold">
                     <span
-                      className="mr-2 inline-block h-2.5 w-2.5 rounded-full"
-                      style={{ backgroundColor: `#${driver?.team_colour || "888"}` }}
+                      className="mr-2 inline-block h-3 w-3 border-2"
+                      style={{
+                        backgroundColor: `#${driver?.team_colour || "888"}`,
+                        borderColor: "#1a1a1a",
+                      }}
                     />
                     {driver?.name_acronym || `#${driverNumber}`}
                   </td>
-                  <td className="py-2.5 text-zinc-400">
+                  <td className="p-3 border-r-2 border-nb-primary text-nb-text-muted font-headline font-bold text-xs uppercase">
                     {driver?.team_name || ""}
                   </td>
-                  <td className="py-2.5 font-mono text-zinc-400">{loc.x?.toFixed(0) ?? "--"}</td>
-                  <td className="py-2.5 font-mono text-zinc-400">{loc.y?.toFixed(0) ?? "--"}</td>
-                  <td className="py-2.5 font-mono text-zinc-400">{loc.z?.toFixed(0) ?? "--"}</td>
-                  <td className="py-2.5 text-xs text-zinc-500">
+                  <td className="p-3 border-r-2 border-nb-primary font-mono text-nb-text-muted font-bold text-xs">
+                    {loc.x?.toFixed(0) ?? "--"}
+                  </td>
+                  <td className="p-3 border-r-2 border-nb-primary font-mono text-nb-text-muted font-bold text-xs">
+                    {loc.y?.toFixed(0) ?? "--"}
+                  </td>
+                  <td className="p-3 border-r-2 border-nb-primary font-mono text-nb-text-muted font-bold text-xs">
+                    {loc.z?.toFixed(0) ?? "--"}
+                  </td>
+                  <td className="p-3 text-xs text-nb-text-muted font-headline font-bold">
                     {loc.date ? new Date(loc.date).toLocaleTimeString() : "--"}
                   </td>
                 </tr>
@@ -292,7 +349,7 @@ export default function PositionsPage() {
             </tbody>
           </table>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

@@ -10,7 +10,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "rounded-xl border border-zinc-800 bg-zinc-950/50 p-4 shadow-lg backdrop-blur-sm",
+        "border-4 border-nb-primary bg-nb-surface neo-shadow",
         className
       )}
     >
@@ -27,7 +27,7 @@ export function CardHeader({
   children: React.ReactNode;
 }) {
   return (
-    <div className={cn("mb-3 flex items-center justify-between", className)}>
+    <div className={cn("px-4 py-3 border-b-4 border-nb-primary bg-nb-primary text-white flex items-center justify-between", className)}>
       {children}
     </div>
   );
@@ -41,7 +41,7 @@ export function CardTitle({
   children: React.ReactNode;
 }) {
   return (
-    <h3 className={cn("text-sm font-semibold text-zinc-400 uppercase tracking-wider", className)}>
+    <h3 className={cn("text-lg font-black font-headline uppercase tracking-tighter", className)}>
       {children}
     </h3>
   );

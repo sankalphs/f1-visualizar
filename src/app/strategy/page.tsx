@@ -4,8 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { f1Api } from "@/lib/api/f1";
 import { useSession } from "@/components/dashboard/SessionSelector";
 import { SessionSelector } from "@/components/dashboard/SessionSelector";
-import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { TableSkeleton } from "@/components/ui/Skeleton";
 import { getTyreColor } from "@/lib/utils";
 import { GitBranch } from "lucide-react";
@@ -55,26 +53,30 @@ export default function StrategyPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-100">
-            <GitBranch className="mr-2 inline" size={24} />
+          <p className="font-headline font-bold text-xs uppercase tracking-widest text-nb-yellow">
+            <GitBranch className="mr-1 inline" size={14} />
+            Race Analysis
+          </p>
+          <h1 className="text-5xl md:text-7xl font-black font-headline uppercase tracking-tighter mt-2 leading-none">
             Strategy
           </h1>
-          <p className="text-sm text-zinc-500">
-            Tire strategy and stint visualization
-          </p>
         </div>
         <SessionSelector />
       </div>
 
       {/* Strategy Timeline */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Tire Strategy Timeline</CardTitle>
-        </CardHeader>
+      <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+        <div className="bg-nb-primary px-4 py-3">
+          <h2 className="font-headline font-black uppercase tracking-tighter text-lg">
+            Tire Strategy Timeline
+          </h2>
+        </div>
         {stintsLoading ? (
-          <TableSkeleton rows={10} cols={4} />
+          <div className="p-4">
+            <TableSkeleton rows={10} cols={4} />
+          </div>
         ) : (
-          <div className="space-y-2">
+          <div className="p-4 space-y-1">
             {Array.from(stintsByDriver.entries())
               .sort((a, b) => a[0] - b[0])
               .map(([driverNum, driverStints]) => {
@@ -82,18 +84,18 @@ export default function StrategyPage() {
                 return (
                   <div
                     key={driverNum}
-                    className="flex items-center gap-3 border-b border-zinc-800/50 py-2"
+                    className="flex items-center gap-3 border-b-4 border-nb-primary py-2"
                   >
-                    <div className="w-24 flex-shrink-0 text-sm font-medium">
+                    <div className="w-28 flex-shrink-0 font-headline font-bold text-sm uppercase">
                       <span
-                        className="mr-2 inline-block h-2.5 w-2.5 rounded-full"
+                        className="mr-2 inline-block h-3 w-3"
                         style={{
                           backgroundColor: `#${driver?.team_colour || "888"}`,
                         }}
                       />
                       {driver?.name_acronym || `#${driverNum}`}
                     </div>
-                    <div className="relative flex-1" style={{ height: "28px" }}>
+                    <div className="relative flex-1" style={{ height: "32px" }}>
                       {driverStints.map((stint) => {
                         const startPct =
                           ((stint.lap_start - 1) / maxLaps) * 100;
@@ -103,18 +105,18 @@ export default function StrategyPage() {
                         return (
                           <div
                             key={stint.stint_number}
-                            className="absolute flex items-center justify-center rounded-md text-[10px] font-bold"
+                            className="absolute flex items-center justify-center border-2 border-nb-primary text-[10px] font-headline font-black"
                             style={{
                               left: `${startPct}%`,
                               width: `${widthPct}%`,
                               backgroundColor: getTyreColor(stint.compound),
                               color:
                                 stint.compound === "HARD" ? "#000" : "#fff",
-                              height: "28px",
+                              height: "32px",
                             }}
                           >
                             {stint.compound?.charAt(0) ?? "?"}
-                            <span className="ml-1 font-normal opacity-80">
+                            <span className="ml-1 font-bold opacity-80">
                               L{stint.lap_start}-{endLap}
                             </span>
                           </div>
@@ -126,24 +128,26 @@ export default function StrategyPage() {
               })}
           </div>
         )}
-      </Card>
+      </div>
 
       {/* Stint Details */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Stint Details</CardTitle>
-        </CardHeader>
+      <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+        <div className="bg-nb-primary px-4 py-3">
+          <h2 className="font-headline font-black uppercase tracking-tighter text-lg">
+            Stint Details
+          </h2>
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-zinc-800 text-zinc-500">
-                <th className="py-2 text-left font-medium">Driver</th>
-                <th className="py-2 text-left font-medium">Stint</th>
-                <th className="py-2 text-left font-medium">Compound</th>
-                <th className="py-2 text-left font-medium">Laps</th>
-                <th className="py-2 text-left font-medium">Start Lap</th>
-                <th className="py-2 text-left font-medium">End Lap</th>
-                <th className="py-2 text-left font-medium">Tyre Age</th>
+              <tr className="bg-nb-primary text-nb-text font-headline font-bold uppercase tracking-tighter text-xs">
+                <th className="px-4 py-3 text-left">Driver</th>
+                <th className="px-4 py-3 text-left">Stint</th>
+                <th className="px-4 py-3 text-left">Compound</th>
+                <th className="px-4 py-3 text-left">Laps</th>
+                <th className="px-4 py-3 text-left">Start Lap</th>
+                <th className="px-4 py-3 text-left">End Lap</th>
+                <th className="px-4 py-3 text-left">Tyre Age</th>
               </tr>
             </thead>
             <tbody>
@@ -152,39 +156,46 @@ export default function StrategyPage() {
                 return (
                   <tr
                     key={idx}
-                    className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
+                    className="border-b-4 border-nb-primary hover:bg-nb-yellow/10"
                   >
-                    <td className="py-2.5 font-medium">
+                    <td className="px-4 py-2.5 font-headline font-bold uppercase">
                       {driver?.name_acronym || `#${stint.driver_number}`}
                     </td>
-                    <td className="py-2.5">{stint.stint_number}</td>
-                    <td className="py-2.5">
-                      <Badge
+                    <td className="px-4 py-2.5 font-headline font-bold">
+                      {stint.stint_number}
+                    </td>
+                    <td className="px-4 py-2.5">
+                      <span
+                        className="inline-block border-2 border-nb-primary px-2 py-0.5 font-headline font-black uppercase text-xs"
                         style={{
                           backgroundColor: getTyreColor(stint.compound),
                           color: stint.compound === "HARD" ? "#000" : "#fff",
                         }}
                       >
                         {stint.compound}
-                      </Badge>
+                      </span>
                     </td>
-                    <td className="py-2.5">
+                    <td className="px-4 py-2.5 font-headline font-bold">
                       {stint.lap_end
                         ? stint.lap_end - stint.lap_start + 1
                         : "Ongoing"}
                     </td>
-                    <td className="py-2.5">L{stint.lap_start}</td>
-                    <td className="py-2.5">
+                    <td className="px-4 py-2.5 font-headline font-bold">
+                      L{stint.lap_start}
+                    </td>
+                    <td className="px-4 py-2.5 font-headline font-bold">
                       {stint.lap_end ? `L${stint.lap_end}` : "Current"}
                     </td>
-                    <td className="py-2.5">{stint.tyre_age_at_start}</td>
+                    <td className="px-4 py-2.5 font-headline font-bold">
+                      {stint.tyre_age_at_start}
+                    </td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

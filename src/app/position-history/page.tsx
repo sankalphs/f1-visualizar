@@ -4,8 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { f1Api } from "@/lib/api/f1";
 import { useSession } from "@/components/dashboard/SessionSelector";
 import { SessionSelector } from "@/components/dashboard/SessionSelector";
-import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { TrendingUp } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -157,33 +155,33 @@ export default function PositionHistoryPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-100">
-            <TrendingUp className="mr-2 inline" size={24} />
+          <span className="font-headline font-bold text-sm uppercase tracking-tighter text-nb-text-muted">
+            <TrendingUp className="mr-2 inline" size={16} />
+            Race Data
+          </span>
+          <h1 className="text-5xl md:text-7xl font-black font-headline uppercase tracking-tighter mt-2 leading-none text-nb-text">
             Position History
           </h1>
-          <p className="text-sm text-zinc-500">
-            How each driver&apos;s position changed throughout the session
-          </p>
         </div>
         <SessionSelector />
       </div>
 
       {/* Driver selection */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Select Drivers</CardTitle>
-        </CardHeader>
-        <div className="flex flex-wrap gap-2">
+      <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+        <div className="bg-nb-primary text-white p-4 font-headline font-bold uppercase tracking-tighter">
+          Select Drivers
+        </div>
+        <div className="flex flex-wrap gap-2 p-4">
           {allDriverNumbers.map((dn) => {
             const d = driverMap.get(dn);
             return (
               <button
                 key={dn}
                 onClick={() => toggleDriver(dn)}
-                className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
+                className={`border-2 px-3 py-1.5 text-xs font-headline font-bold uppercase tracking-tighter transition-colors ${
                   selectedDrivers.includes(dn)
-                    ? "border-red-600 bg-red-600/20 text-red-400"
-                    : "border-zinc-700 bg-zinc-800 text-zinc-400 hover:border-zinc-600"
+                    ? "border-nb-primary bg-nb-yellow text-nb-primary"
+                    : "border-nb-primary bg-nb-surface text-nb-text hover:bg-nb-surface-dim"
                 }`}
                 style={{
                   borderColor: selectedDrivers.includes(dn)
@@ -192,7 +190,7 @@ export default function PositionHistoryPage() {
                 }}
               >
                 <span
-                  className="mr-1.5 inline-block h-2 w-2 rounded-full"
+                  className="mr-1.5 inline-block w-1 h-4 align-middle"
                   style={{ backgroundColor: `#${d?.team_colour || "888"}` }}
                 />
                 {d?.name_acronym || `#${dn}`}
@@ -200,17 +198,17 @@ export default function PositionHistoryPage() {
             );
           })}
         </div>
-      </Card>
+      </div>
 
       {/* Chart */}
       {isLoading ? (
         <Skeleton className="h-[500px] w-full" />
       ) : chartData.length > 0 ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Position Over Session Duration</CardTitle>
-          </CardHeader>
-          <div className="h-[500px] w-full">
+        <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+          <div className="bg-nb-primary text-white p-4 font-headline font-bold uppercase tracking-tighter">
+            Position Over Session Duration
+          </div>
+          <div className="h-[500px] w-full p-4">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
@@ -266,31 +264,31 @@ export default function PositionHistoryPage() {
               </LineChart>
             </ResponsiveContainer>
           </div>
-        </Card>
+        </div>
       ) : (
-        <Card className="p-8">
-          <p className="text-center text-zinc-500">
+        <div className="border-4 border-nb-primary bg-nb-surface neo-shadow p-8">
+          <p className="text-center font-headline font-bold text-nb-text-muted">
             No position history data available for this session
           </p>
-        </Card>
+        </div>
       )}
 
       {/* Position change summary */}
       {positions.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Position Change Summary</CardTitle>
-          </CardHeader>
+        <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+          <div className="bg-nb-primary text-white p-4 font-headline font-bold uppercase tracking-tighter">
+            Position Change Summary
+          </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm font-headline">
               <thead>
-                <tr className="border-b border-zinc-800 text-zinc-500">
-                  <th className="py-2 text-left font-medium">Driver</th>
-                  <th className="py-2 text-left font-medium">Start</th>
-                  <th className="py-2 text-left font-medium">Current</th>
-                  <th className="py-2 text-left font-medium">Change</th>
-                  <th className="py-2 text-left font-medium">Best</th>
-                  <th className="py-2 text-left font-medium">Worst</th>
+                <tr className="border-b-4 border-nb-primary bg-nb-primary text-white">
+                  <th className="py-2 px-4 text-left font-bold uppercase tracking-tighter">Driver</th>
+                  <th className="py-2 px-4 text-left font-bold uppercase tracking-tighter">Start</th>
+                  <th className="py-2 px-4 text-left font-bold uppercase tracking-tighter">Current</th>
+                  <th className="py-2 px-4 text-left font-bold uppercase tracking-tighter">Change</th>
+                  <th className="py-2 px-4 text-left font-bold uppercase tracking-tighter">Best</th>
+                  <th className="py-2 px-4 text-left font-bold uppercase tracking-tighter">Worst</th>
                 </tr>
               </thead>
               <tbody>
@@ -311,45 +309,49 @@ export default function PositionHistoryPage() {
                   return (
                     <tr
                       key={dn}
-                      className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
+                      className="border-b-2 border-nb-primary hover:bg-nb-surface-dim"
                     >
-                      <td className="py-2.5 font-medium">
+                      <td className="py-2.5 px-4 font-bold">
                         <div className="flex items-center gap-2">
                           <span
-                            className="inline-block h-2.5 w-2.5 rounded-full"
+                            className="inline-block w-1 h-6"
                             style={{ backgroundColor: `#${d?.team_colour || "888"}` }}
                           />
                           {d?.name_acronym || `#${dn}`}
                         </div>
                       </td>
-                      <td className="py-2.5">
-                        <Badge variant="outline">P{startPos}</Badge>
+                      <td className="py-2.5 px-4">
+                        <span className="border-2 border-nb-primary px-2 py-0.5 text-xs font-bold">
+                          P{startPos}
+                        </span>
                       </td>
-                      <td className="py-2.5">
-                        <Badge variant={endPos <= 3 ? "success" : "default"}>P{endPos}</Badge>
+                      <td className="py-2.5 px-4">
+                        <span className={`border-2 border-nb-primary px-2 py-0.5 text-xs font-bold ${endPos <= 3 ? "bg-nb-green text-nb-primary" : ""}`}>
+                          P{endPos}
+                        </span>
                       </td>
-                      <td className="py-2.5 font-mono font-semibold">
+                      <td className="py-2.5 px-4 font-mono font-semibold">
                         <span
                           className={
                             change > 0
                               ? "text-emerald-400"
                               : change < 0
-                                ? "text-red-400"
-                                : "text-zinc-400"
+                                ? "text-nb-red"
+                                : "text-nb-text-muted"
                           }
                         >
                           {change > 0 ? `+${change}` : change === 0 ? "0" : change}
                         </span>
                       </td>
-                      <td className="py-2.5 text-zinc-400">P{bestPos}</td>
-                      <td className="py-2.5 text-zinc-400">P{worstPos}</td>
+                      <td className="py-2.5 px-4 text-nb-text-muted">P{bestPos}</td>
+                      <td className="py-2.5 px-4 text-nb-text-muted">P{worstPos}</td>
                     </tr>
                   );
                 })}
               </tbody>
             </table>
           </div>
-        </Card>
+        </div>
       )}
     </div>
   );

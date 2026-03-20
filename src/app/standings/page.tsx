@@ -4,8 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { f1Api } from "@/lib/api/f1";
 import { useSession } from "@/components/dashboard/SessionSelector";
 import { SessionSelector } from "@/components/dashboard/SessionSelector";
-import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { TableSkeleton } from "@/components/ui/Skeleton";
 import { formatInterval } from "@/lib/utils";
 import { Trophy } from "lucide-react";
@@ -69,34 +67,36 @@ export default function StandingsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-100">
-            <Trophy className="mr-2 inline" size={24} />
+          <p className="font-headline font-black uppercase tracking-tighter text-sm text-nb-text-muted">
+            Race Data
+          </p>
+          <h1 className="font-headline font-black uppercase tracking-tighter text-4xl text-nb-text">
+            <Trophy className="mr-2 inline" size={32} />
             Standings
           </h1>
-          <p className="text-sm text-zinc-500">
-            Championship standings and session results
-          </p>
         </div>
         <SessionSelector />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Driver Championship */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Driver Championship</CardTitle>
-          </CardHeader>
+        <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+          <div className="bg-nb-primary px-4 py-2">
+            <h2 className="font-headline font-black uppercase tracking-tighter text-white">
+              Driver Championship
+            </h2>
+          </div>
           {cdLoading ? (
             <TableSkeleton rows={10} cols={4} />
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm font-headline font-bold">
                 <thead>
-                  <tr className="border-b border-zinc-800 text-zinc-500">
-                    <th className="py-2 text-left font-medium">Pos</th>
-                    <th className="py-2 text-left font-medium">Driver</th>
-                    <th className="py-2 text-left font-medium">Points</th>
-                    <th className="py-2 text-left font-medium">Change</th>
+                  <tr className="bg-nb-primary text-white font-headline font-black uppercase tracking-tighter">
+                    <th className="px-3 py-2 text-left border-r-4 border-nb-surface">Pos</th>
+                    <th className="px-3 py-2 text-left border-r-4 border-nb-surface">Driver</th>
+                    <th className="px-3 py-2 text-left border-r-4 border-nb-surface">Points</th>
+                    <th className="px-3 py-2 text-left">Change</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -106,27 +106,27 @@ export default function StandingsPage() {
                     return (
                       <tr
                         key={cd.driver_number}
-                        className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
+                        className="border-b-4 border-nb-primary/20 hover:bg-nb-yellow/20"
                       >
-                        <td className="py-2.5">
-                          <Badge variant={cd.position_current <= 3 ? "success" : "default"}>
-                            P{cd.position_current}
-                          </Badge>
+                        <td className="px-3 py-2.5 border-r-4 border-nb-primary/20">
+                          <span className="font-headline font-black text-nb-text">
+                            {cd.position_current}
+                          </span>
                         </td>
-                        <td className="py-2.5 font-medium">
+                        <td className="px-3 py-2.5 border-r-4 border-nb-primary/20 font-headline font-bold text-nb-text">
                           <span
-                            className="mr-2 inline-block h-2.5 w-2.5 rounded-full"
+                            className="mr-2 inline-block w-1 h-6 align-middle"
                             style={{ backgroundColor: `#${driver?.team_colour || "888"}` }}
                           />
                           {driver?.name_acronym || `#${cd.driver_number}`}
                         </td>
-                        <td className="py-2.5 font-mono font-bold">
+                        <td className="px-3 py-2.5 border-r-4 border-nb-primary/20 font-headline font-black text-nb-text">
                           {cd.points_current}
                         </td>
-                        <td className="py-2.5">
-                          {change > 0 && <span className="text-emerald-400">+{change}</span>}
-                          {change < 0 && <span className="text-red-400">{change}</span>}
-                          {change === 0 && <span className="text-zinc-500">-</span>}
+                        <td className="px-3 py-2.5">
+                          {change > 0 && <span className="font-headline font-black text-nb-red">+{change}</span>}
+                          {change < 0 && <span className="font-headline font-black text-nb-text-muted">{change}</span>}
+                          {change === 0 && <span className="font-headline font-bold text-nb-text-muted">-</span>}
                         </td>
                       </tr>
                     );
@@ -135,24 +135,26 @@ export default function StandingsPage() {
               </table>
             </div>
           )}
-        </Card>
+        </div>
 
         {/* Constructor Championship */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Constructor Championship</CardTitle>
-          </CardHeader>
+        <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+          <div className="bg-nb-primary px-4 py-2">
+            <h2 className="font-headline font-black uppercase tracking-tighter text-white">
+              Constructor Championship
+            </h2>
+          </div>
           {ctLoading ? (
             <TableSkeleton rows={10} cols={4} />
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm font-headline font-bold">
                 <thead>
-                  <tr className="border-b border-zinc-800 text-zinc-500">
-                    <th className="py-2 text-left font-medium">Pos</th>
-                    <th className="py-2 text-left font-medium">Team</th>
-                    <th className="py-2 text-left font-medium">Points</th>
-                    <th className="py-2 text-left font-medium">Change</th>
+                  <tr className="bg-nb-primary text-white font-headline font-black uppercase tracking-tighter">
+                    <th className="px-3 py-2 text-left border-r-4 border-nb-surface">Pos</th>
+                    <th className="px-3 py-2 text-left border-r-4 border-nb-surface">Team</th>
+                    <th className="px-3 py-2 text-left border-r-4 border-nb-surface">Points</th>
+                    <th className="px-3 py-2 text-left">Change</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -161,21 +163,23 @@ export default function StandingsPage() {
                     return (
                       <tr
                         key={ct.team_name}
-                        className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
+                        className="border-b-4 border-nb-primary/20 hover:bg-nb-yellow/20"
                       >
-                        <td className="py-2.5">
-                          <Badge variant={ct.position_current <= 3 ? "success" : "default"}>
-                            P{ct.position_current}
-                          </Badge>
+                        <td className="px-3 py-2.5 border-r-4 border-nb-primary/20">
+                          <span className="font-headline font-black text-nb-text">
+                            {ct.position_current}
+                          </span>
                         </td>
-                        <td className="py-2.5 font-medium">{ct.team_name}</td>
-                        <td className="py-2.5 font-mono font-bold">
+                        <td className="px-3 py-2.5 border-r-4 border-nb-primary/20 font-headline font-bold text-nb-text">
+                          {ct.team_name}
+                        </td>
+                        <td className="px-3 py-2.5 border-r-4 border-nb-primary/20 font-headline font-black text-nb-text">
                           {ct.points_current}
                         </td>
-                        <td className="py-2.5">
-                          {change > 0 && <span className="text-emerald-400">+{change}</span>}
-                          {change < 0 && <span className="text-red-400">{change}</span>}
-                          {change === 0 && <span className="text-zinc-500">-</span>}
+                        <td className="px-3 py-2.5">
+                          {change > 0 && <span className="font-headline font-black text-nb-red">+{change}</span>}
+                          {change < 0 && <span className="font-headline font-black text-nb-text-muted">{change}</span>}
+                          {change === 0 && <span className="font-headline font-bold text-nb-text-muted">-</span>}
                         </td>
                       </tr>
                     );
@@ -184,27 +188,29 @@ export default function StandingsPage() {
               </table>
             </div>
           )}
-        </Card>
+        </div>
       </div>
 
       {/* Session Result & Starting Grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Session Result</CardTitle>
-          </CardHeader>
+        <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+          <div className="bg-nb-primary px-4 py-2">
+            <h2 className="font-headline font-black uppercase tracking-tighter text-white">
+              Session Result
+            </h2>
+          </div>
           {srLoading ? (
             <TableSkeleton rows={10} cols={5} />
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm font-headline font-bold">
                 <thead>
-                  <tr className="border-b border-zinc-800 text-zinc-500">
-                    <th className="py-2 text-left font-medium">Pos</th>
-                    <th className="py-2 text-left font-medium">Driver</th>
-                    <th className="py-2 text-left font-medium">Gap</th>
-                    <th className="py-2 text-left font-medium">Laps</th>
-                    <th className="py-2 text-left font-medium">Status</th>
+                  <tr className="bg-nb-primary text-white font-headline font-black uppercase tracking-tighter">
+                    <th className="px-3 py-2 text-left border-r-4 border-nb-surface">Pos</th>
+                    <th className="px-3 py-2 text-left border-r-4 border-nb-surface">Driver</th>
+                    <th className="px-3 py-2 text-left border-r-4 border-nb-surface">Gap</th>
+                    <th className="px-3 py-2 text-left border-r-4 border-nb-surface">Laps</th>
+                    <th className="px-3 py-2 text-left">Status</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -213,29 +219,47 @@ export default function StandingsPage() {
                     return (
                       <tr
                         key={sr.driver_number}
-                        className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
+                        className="border-b-4 border-nb-primary/20 hover:bg-nb-yellow/20"
                       >
-                        <td className="py-2.5">
-                          <Badge variant={sr.position <= 3 ? "success" : "default"}>
-                            P{sr.position}
-                          </Badge>
+                        <td className="px-3 py-2.5 border-r-4 border-nb-primary/20">
+                          <span className="font-headline font-black text-nb-text">
+                            {sr.position}
+                          </span>
                         </td>
-                        <td className="py-2.5 font-medium">
+                        <td className="px-3 py-2.5 border-r-4 border-nb-primary/20 font-headline font-bold text-nb-text">
                           <span
-                            className="mr-2 inline-block h-2.5 w-2.5 rounded-full"
+                            className="mr-2 inline-block w-1 h-6 align-middle"
                             style={{ backgroundColor: `#${driver?.team_colour || "888"}` }}
                           />
                           {driver?.name_acronym || `#${sr.driver_number}`}
                         </td>
-                        <td className="py-2.5 font-mono text-zinc-400">
+                        <td className="px-3 py-2.5 border-r-4 border-nb-primary/20 font-headline font-bold text-nb-text-muted">
                           {formatInterval(sr.gap_to_leader)}
                         </td>
-                        <td className="py-2.5 text-zinc-400">{sr.number_of_laps}</td>
-                        <td className="py-2.5">
-                          {sr.dnf && <Badge variant="danger">DNF</Badge>}
-                          {sr.dns && <Badge variant="warning">DNS</Badge>}
-                          {sr.dsq && <Badge variant="danger">DSQ</Badge>}
-                          {!sr.dnf && !sr.dns && !sr.dsq && <Badge variant="success">OK</Badge>}
+                        <td className="px-3 py-2.5 border-r-4 border-nb-primary/20 font-headline font-bold text-nb-text-muted">
+                          {sr.number_of_laps}
+                        </td>
+                        <td className="px-3 py-2.5">
+                          {sr.dnf && (
+                            <span className="border-2 border-nb-primary bg-nb-red px-2 py-0.5 text-xs font-headline font-black uppercase text-white">
+                              DNF
+                            </span>
+                          )}
+                          {sr.dns && (
+                            <span className="border-2 border-nb-primary bg-nb-yellow px-2 py-0.5 text-xs font-headline font-black uppercase text-nb-text">
+                              DNS
+                            </span>
+                          )}
+                          {sr.dsq && (
+                            <span className="border-2 border-nb-primary bg-nb-red px-2 py-0.5 text-xs font-headline font-black uppercase text-white">
+                              DSQ
+                            </span>
+                          )}
+                          {!sr.dnf && !sr.dns && !sr.dsq && (
+                            <span className="border-2 border-nb-primary bg-nb-surface px-2 py-0.5 text-xs font-headline font-black uppercase text-nb-text">
+                              OK
+                            </span>
+                          )}
                         </td>
                       </tr>
                     );
@@ -244,19 +268,21 @@ export default function StandingsPage() {
               </table>
             </div>
           )}
-        </Card>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Starting Grid</CardTitle>
-          </CardHeader>
+        <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+          <div className="bg-nb-primary px-4 py-2">
+            <h2 className="font-headline font-black uppercase tracking-tighter text-white">
+              Starting Grid
+            </h2>
+          </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm font-headline font-bold">
               <thead>
-                <tr className="border-b border-zinc-800 text-zinc-500">
-                  <th className="py-2 text-left font-medium">Pos</th>
-                  <th className="py-2 text-left font-medium">Driver</th>
-                  <th className="py-2 text-left font-medium">Lap Time</th>
+                <tr className="bg-nb-primary text-white font-headline font-black uppercase tracking-tighter">
+                  <th className="px-3 py-2 text-left border-r-4 border-nb-surface">Pos</th>
+                  <th className="px-3 py-2 text-left border-r-4 border-nb-surface">Driver</th>
+                  <th className="px-3 py-2 text-left">Lap Time</th>
                 </tr>
               </thead>
               <tbody>
@@ -265,21 +291,21 @@ export default function StandingsPage() {
                   return (
                     <tr
                       key={sg.driver_number}
-                      className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
+                      className="border-b-4 border-nb-primary/20 hover:bg-nb-yellow/20"
                     >
-                      <td className="py-2.5">
-                        <Badge variant={sg.position <= 3 ? "success" : "default"}>
-                          P{sg.position}
-                        </Badge>
+                      <td className="px-3 py-2.5 border-r-4 border-nb-primary/20">
+                        <span className="font-headline font-black text-nb-text">
+                          {sg.position}
+                        </span>
                       </td>
-                      <td className="py-2.5 font-medium">
+                      <td className="px-3 py-2.5 border-r-4 border-nb-primary/20 font-headline font-bold text-nb-text">
                         <span
-                          className="mr-2 inline-block h-2.5 w-2.5 rounded-full"
+                          className="mr-2 inline-block w-1 h-6 align-middle"
                           style={{ backgroundColor: `#${driver?.team_colour || "888"}` }}
                         />
                         {driver?.name_acronym || `#${sg.driver_number}`}
                       </td>
-                      <td className="py-2.5 font-mono text-zinc-400">
+                      <td className="px-3 py-2.5 font-headline font-bold text-nb-text-muted">
                         {sg.lap_duration?.toFixed(3) ?? "--"}
                       </td>
                     </tr>
@@ -288,7 +314,7 @@ export default function StandingsPage() {
               </tbody>
             </table>
           </div>
-        </Card>
+        </div>
       </div>
     </div>
   );
