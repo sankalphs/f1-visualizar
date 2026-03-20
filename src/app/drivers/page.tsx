@@ -42,13 +42,13 @@ export default function DriversPage() {
             <Card key={driver.driver_number} className="p-0 overflow-hidden">
               <div
                 className="h-1.5 w-full"
-                style={{ backgroundColor: `#${driver.team_colour}` }}
+                style={{ backgroundColor: `#${driver.team_colour || "888"}` }}
               />
               <div className="p-4 text-center">
                 {driver.headshot_url ? (
                   <img
                     src={driver.headshot_url}
-                    alt={driver.full_name}
+                    alt={driver.full_name || ""}
                     className="mx-auto mb-3 h-20 w-20 rounded-full object-cover"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = "";
@@ -57,16 +57,16 @@ export default function DriversPage() {
                   />
                 ) : (
                   <div className="mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-full bg-zinc-800 text-2xl font-bold">
-                    {driver.name_acronym?.charAt(0)}
+                    {driver.name_acronym?.charAt(0) || "?"}
                   </div>
                 )}
-                <h3 className="text-sm font-semibold text-zinc-100">{driver.full_name}</h3>
-                <p className="text-xs text-zinc-500">{driver.team_name}</p>
+                <h3 className="text-sm font-semibold text-zinc-100">{driver.full_name || "Unknown"}</h3>
+                <p className="text-xs text-zinc-500">{driver.team_name || ""}</p>
                 <div className="mt-2 flex items-center justify-center gap-2">
                   <Badge variant="outline">#{driver.driver_number}</Badge>
                   <span
                     className="inline-block h-3 w-3 rounded-full"
-                    style={{ backgroundColor: `#${driver.team_colour}` }}
+                    style={{ backgroundColor: `#${driver.team_colour || "888"}` }}
                   />
                 </div>
               </div>
@@ -101,19 +101,19 @@ export default function DriversPage() {
                   <td className="py-2.5">
                     <img
                       src={d.headshot_url}
-                      alt={d.full_name}
+                      alt={d.full_name || ""}
                       className="h-8 w-8 rounded-full object-cover"
                       onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
                     />
                   </td>
                   <td className="py-2.5 font-mono font-bold">{d.driver_number}</td>
-                  <td className="py-2.5 font-medium">{d.full_name}</td>
-                  <td className="py-2.5 font-mono text-zinc-400">{d.name_acronym}</td>
-                  <td className="py-2.5 text-zinc-400">{d.team_name}</td>
+                  <td className="py-2.5 font-medium">{d.full_name || "Unknown"}</td>
+                  <td className="py-2.5 font-mono text-zinc-400">{d.name_acronym || "--"}</td>
+                  <td className="py-2.5 text-zinc-400">{d.team_name || ""}</td>
                   <td className="py-2.5">
                     <span
                       className="inline-block h-4 w-8 rounded"
-                      style={{ backgroundColor: `#${d.team_colour}` }}
+                      style={{ backgroundColor: `#${d.team_colour || "888"}` }}
                     />
                   </td>
                 </tr>

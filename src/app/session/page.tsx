@@ -143,8 +143,8 @@ export default function SessionPage() {
                   <td className="py-2.5 font-medium">
                     <div className="flex items-center gap-2">
                       <img
-                        src={m.country_flag}
-                        alt={m.country_name}
+                        src={m.country_flag || ""}
+                        alt={m.country_name || ""}
                         className="h-4 w-6 rounded object-cover"
                         onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
                       />
@@ -156,7 +156,7 @@ export default function SessionPage() {
                   </td>
                   <td className="py-2.5 text-zinc-400">{m.circuit_short_name}</td>
                   <td className="py-2.5 text-zinc-400">
-                    {new Date(m.date_start).toLocaleDateString()}
+                    {m.date_start ? new Date(m.date_start).toLocaleDateString() : "--"}
                   </td>
                 </tr>
               ))}

@@ -390,7 +390,7 @@ export default function DashboardPage() {
                     <div className="flex-1">
                       <p className="text-xs text-zinc-300">{rc.message}</p>
                       <p className="text-xs text-zinc-600">
-                        {new Date(rc.date).toLocaleTimeString()}
+                        {rc.date ? new Date(rc.date).toLocaleTimeString() : "--"}
                       </p>
                     </div>
                   </div>
@@ -436,10 +436,10 @@ export default function DashboardPage() {
                         </td>
                         <td className="py-2.5">L{pit.lap_number}</td>
                         <td className="py-2.5 font-mono text-zinc-400">
-                          {pit.lane_duration.toFixed(2)}s
+                          {pit.lane_duration != null ? `${pit.lane_duration.toFixed(2)}s` : "--"}
                         </td>
                         <td className="py-2.5 font-mono text-zinc-400">
-                          {pit.stop_duration !== null
+                          {pit.stop_duration != null
                             ? `${pit.stop_duration.toFixed(2)}s`
                             : "N/A"}
                         </td>

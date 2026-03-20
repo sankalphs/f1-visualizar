@@ -34,8 +34,10 @@ export default function PitPage() {
     for (const p of pitStops) {
       const existing = map.get(p.driver_number) || { count: 0, totalTime: 0, minTime: Infinity };
       existing.count++;
-      existing.totalTime += p.lane_duration;
-      if (p.lane_duration < existing.minTime) existing.minTime = p.lane_duration;
+      if (p.lane_duration != null) {
+        existing.totalTime += p.lane_duration;
+        if (p.lane_duration < existing.minTime) existing.minTime = p.lane_duration;
+      }
       map.set(p.driver_number, existing);
     }
     return map;
@@ -94,10 +96,10 @@ export default function PitPage() {
                         <Badge variant="info">{stats.count}</Badge>
                       </td>
                       <td className="py-2.5 font-mono font-semibold text-emerald-400">
-                        {stats.minTime.toFixed(2)}s
+                        {stats.minTime === Infinity ? "--" : `${stats.minTime.toFixed(2)}s`}
                       </td>
                       <td className="py-2.5 font-mono text-zinc-400">
-                        {(stats.totalTime / stats.count).toFixed(2)}s
+                        {stats.count > 0 ? `${(stats.totalTime / stats.count).toFixed(2)}s` : "--"}
                       </td>
                     </tr>
                   );
@@ -145,7 +147,7 @@ export default function PitPage() {
                       </td>
                       <td className="py-2.5">L{pit.lap_number}</td>
                       <td className="py-2.5 font-mono text-zinc-200">
-                        {pit.lane_duration.toFixed(2)}s
+                        {pit.lane_duration != null ? `${pit.lane_duration.toFixed(2)}s` : "--"}
                       </td>
                       <td className="py-2.5 font-mono text-zinc-400">
                         {pit.stop_duration !== null
@@ -153,7 +155,7 @@ export default function PitPage() {
                           : "N/A"}
                       </td>
                       <td className="py-2.5 text-xs text-zinc-500">
-                        {new Date(pit.date).toLocaleTimeString()}
+                        {pit.date ? new Date(pit.date).toLocaleTimeString() : "--"}
                       </td>
                     </tr>
                   );

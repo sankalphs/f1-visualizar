@@ -130,7 +130,7 @@ export default function TeamRadioPage() {
                       </audio>
                     </div>
                     <span className="text-xs text-zinc-500">
-                      {new Date(r.date).toLocaleTimeString()}
+                      {r.date ? new Date(r.date).toLocaleTimeString() : "--"}
                     </span>
                   </div>
                 );

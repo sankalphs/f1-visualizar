@@ -101,7 +101,7 @@ export default function RaceControlPage() {
                     <div className="flex-1">
                       <p className="text-sm text-zinc-200">{event.message}</p>
                       <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
-                        <span>{new Date(event.date).toLocaleTimeString()}</span>
+                        <span>{event.date ? new Date(event.date).toLocaleTimeString() : "--"}</span>
                         {event.scope && <span>Scope: {event.scope}</span>}
                         {event.sector && <span>Sector: {event.sector}</span>}
                         {event.lap_number && <span>Lap: {event.lap_number}</span>}

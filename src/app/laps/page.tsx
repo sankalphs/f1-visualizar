@@ -65,7 +65,7 @@ export default function LapsPage() {
             <option value="">All Drivers</option>
             {drivers.map((d) => (
               <option key={d.driver_number} value={d.driver_number}>
-                {d.name_acronym} - {d.team_name}
+                {d.name_acronym || `#${d.driver_number}`} - {d.team_name || ""}
               </option>
             ))}
           </select>

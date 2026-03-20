@@ -180,7 +180,7 @@ export default function OvertakesPage() {
                       className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
                     >
                       <td className="py-2.5 text-xs text-zinc-500">
-                        {new Date(o.date).toLocaleTimeString()}
+                        {o.date ? new Date(o.date).toLocaleTimeString() : "--"}
                       </td>
                       <td className="py-2.5 font-medium">
                         <span

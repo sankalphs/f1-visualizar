@@ -15,6 +15,7 @@ import {
   Radio,
   ArrowLeftRight,
   MessageSquare,
+  MapPin,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -25,6 +26,7 @@ const navItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
   { href: "/laps", label: "Lap Times", icon: Timer },
   { href: "/telemetry", label: "Telemetry", icon: Gauge },
+  { href: "/positions", label: "Track Positions", icon: MapPin },
   { href: "/strategy", label: "Strategy", icon: GitBranch },
   { href: "/standings", label: "Standings", icon: Trophy },
   { href: "/session", label: "Session", icon: Trophy },

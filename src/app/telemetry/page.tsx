@@ -117,15 +117,15 @@ export default function TelemetryPage() {
               }`}
               style={{
                 borderColor: selectedDrivers.includes(d.driver_number)
-                  ? `#${d.team_colour}`
+                  ? `#${d.team_colour || "888"}`
                   : undefined,
               }}
             >
               <span
                 className="mr-1.5 inline-block h-2 w-2 rounded-full"
-                style={{ backgroundColor: `#${d.team_colour}` }}
+                style={{ backgroundColor: `#${d.team_colour || "888"}` }}
               />
-              {d.name_acronym}
+              {d.name_acronym || `#${d.driver_number}`}
             </button>
           ))}
         </div>

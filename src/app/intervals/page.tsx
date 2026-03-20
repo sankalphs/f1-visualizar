@@ -116,7 +116,7 @@ export default function IntervalsPage() {
                             : formatInterval(interval.interval)}
                         </td>
                         <td className="py-2.5 text-xs text-zinc-500">
-                          {new Date(interval.date).toLocaleTimeString()}
+                          {interval.date ? new Date(interval.date).toLocaleTimeString() : "--"}
                         </td>
                       </tr>
                     );
@@ -150,7 +150,7 @@ export default function IntervalsPage() {
                     className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
                   >
                     <td className="py-2 text-xs text-zinc-500">
-                      {new Date(interval.date).toLocaleTimeString()}
+                      {interval.date ? new Date(interval.date).toLocaleTimeString() : "--"}
                     </td>
                     <td className="py-2 font-medium">
                       {driver?.name_acronym || `#${interval.driver_number}`}

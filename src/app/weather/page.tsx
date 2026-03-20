@@ -31,7 +31,7 @@ export default function WeatherPage() {
     () =>
       weather.map((w, i) => ({
         index: i,
-        time: new Date(w.date).toLocaleTimeString(),
+        time: w.date ? new Date(w.date).toLocaleTimeString() : "--",
         track: w.track_temperature,
         air: w.air_temperature,
         humidity: w.humidity,
@@ -159,7 +159,7 @@ export default function WeatherPage() {
                       className="border-b border-zinc-800/50 hover:bg-zinc-900/50"
                     >
                       <td className="py-2 text-xs text-zinc-500">
-                        {new Date(w.date).toLocaleTimeString()}
+                        {w.date ? new Date(w.date).toLocaleTimeString() : "--"}
                       </td>
                       <td className="py-2 font-mono text-zinc-200">{w.track_temperature}</td>
                       <td className="py-2 font-mono text-zinc-400">{w.air_temperature}</td>

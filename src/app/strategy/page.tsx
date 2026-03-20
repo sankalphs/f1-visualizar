@@ -113,7 +113,7 @@ export default function StrategyPage() {
                               height: "28px",
                             }}
                           >
-                            {stint.compound.charAt(0)}
+                            {stint.compound?.charAt(0) ?? "?"}
                             <span className="ml-1 font-normal opacity-80">
                               L{stint.lap_start}-{endLap}
                             </span>
