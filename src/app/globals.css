@@ -213,3 +213,39 @@ html.dark select option {
   background-color: #1e1e1e;
   color: #e8e3da;
 }
+
+/* Ensure all text in dark mode is legible */
+html.dark .text-white {
+  color: #f0ece6 !important;
+}
+html.dark .text-zinc-400 {
+  color: #9a9590 !important;
+}
+html.dark .text-zinc-500 {
+  color: #8a8580 !important;
+}
+html.dark .text-zinc-600 {
+  color: #7a7570 !important;
+}
+
+/* Ensure links have visible colors */
+html.dark a.text-nb-text {
+  color: #e8e3da !important;
+}
+
+/* Light mode: ensure muted text has enough contrast */
+.bg-nb-surface-dim .text-nb-text-muted,
+.bg-nb-surface .text-nb-text-muted {
+  color: #3a3a3a !important;
+}
+
+/* Tables: ensure all text is visible */
+html.dark table {
+  color: #e8e3da;
+}
+html.dark th {
+  color: #e8e3da !important;
+}
+html.dark td {
+  color: #d0ccc4 !important;
+}

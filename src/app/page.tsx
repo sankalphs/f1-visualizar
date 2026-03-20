@@ -3,8 +3,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { f1Api } from "@/lib/api/f1";
 import { useSession } from "@/components/dashboard/SessionSelector";
-import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { Skeleton, TableSkeleton } from "@/components/ui/Skeleton";
 import { formatLapTime, formatInterval } from "@/lib/utils";
 import {
@@ -14,6 +12,8 @@ import {
   ShieldAlert,
   TrendingUp,
   MapPin,
+  Radio,
+  ArrowRight,
 } from "lucide-react";
 import { useMemo } from "react";
 import Link from "next/link";
@@ -29,11 +29,13 @@ export default function DashboardPage() {
   const { data: laps = [], isLoading: lapsLoading } = useQuery({
     queryKey: ["laps", sessionKey],
     queryFn: () => f1Api.laps.list({ session_key: sessionKey }),
+    refetchInterval: 30_000,
   });
 
   const { data: positions = [], isLoading: posLoading } = useQuery({
     queryKey: ["positions", sessionKey],
     queryFn: () => f1Api.position.list({ session_key: sessionKey }),
+    refetchInterval: 30_000,
   });
 
   const { data: weather = [], isLoading: weatherLoading } = useQuery({
@@ -59,15 +61,14 @@ export default function DashboardPage() {
   const { data: intervals = [] } = useQuery({
     queryKey: ["intervals", sessionKey],
     queryFn: () => f1Api.intervals.bySession(sessionKey),
+    refetchInterval: 30_000,
   });
 
   const latestWeather = weather.length > 0 ? weather[weather.length - 1] : null;
 
   const latestIntervals = useMemo(() => {
     const map = new Map<number, (typeof intervals)[0]>();
-    for (const i of intervals) {
-      map.set(i.driver_number, i);
-    }
+    for (const i of intervals) map.set(i.driver_number, i);
     return Array.from(map.values());
   }, [intervals]);
 
@@ -101,9 +102,6 @@ export default function DashboardPage() {
     }
     return Array.from(map.values()).sort((a, b) => a.position - b.position);
   }, [positions]);
-
-  const isLoading = driversLoading || lapsLoading || posLoading;
-  void isLoading;
 
   return (
     <div className="space-y-8">
@@ -153,47 +151,61 @@ export default function DashboardPage() {
         </section>
       )}
 
-      {/* Quick Stats Row */}
+      {/* Quick Stats Row — each links to its page */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <StatCard label="DRIVERS" value={drivers.length} loading={driversLoading} />
-        <StatCard label="LAPS" value={laps.length} loading={lapsLoading} icon={<Timer size={14} />} />
-        <StatCard label="PIT STOPS" value={pitStops.length} icon={<Wrench size={14} />} />
-        <StatCard label="RC EVENTS" value={raceControlEvents.length} icon={<ShieldAlert size={14} />} />
-        <StatCard label="OVERTAKES" value={overtakes.length} icon={<TrendingUp size={14} />} />
+        <Link href="/drivers">
+          <StatCard label="DRIVERS" value={drivers.length} loading={driversLoading} />
+        </Link>
+        <Link href="/laps">
+          <StatCard label="LAPS" value={laps.length} loading={lapsLoading} icon={<Timer size={14} />} />
+        </Link>
+        <Link href="/pit">
+          <StatCard label="PIT STOPS" value={pitStops.length} icon={<Wrench size={14} />} />
+        </Link>
+        <Link href="/race-control">
+          <StatCard label="RC EVENTS" value={raceControlEvents.length} icon={<ShieldAlert size={14} />} />
+        </Link>
+        <Link href="/overtakes">
+          <StatCard label="OVERTAKES" value={overtakes.length} icon={<TrendingUp size={14} />} />
+        </Link>
       </div>
 
       {/* Main Grid: 8/4 layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Column */}
         <div className="lg:col-span-8 space-y-8">
-          {/* Weather */}
-          {weatherLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Skeleton className="h-24" />
-              <Skeleton className="h-24" />
-              <Skeleton className="h-24" />
-              <Skeleton className="h-24" />
-            </div>
-          ) : latestWeather ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <WeatherCard label="TRACK TEMP" value={`${latestWeather.track_temperature}°C`} />
-              <WeatherCard label="AIR TEMP" value={`${latestWeather.air_temperature}°C`} />
-              <WeatherCard label="HUMIDITY" value={`${latestWeather.humidity}%`} />
-              <WeatherCard label="WIND" value={`${latestWeather.wind_speed} km/h`} />
-            </div>
-          ) : null}
+          {/* Weather — links to /weather */}
+          <Link href="/weather" className="block">
+            {weatherLoading ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Skeleton className="h-24" />
+                <Skeleton className="h-24" />
+                <Skeleton className="h-24" />
+                <Skeleton className="h-24" />
+              </div>
+            ) : latestWeather ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <WeatherCard label="TRACK TEMP" value={`${latestWeather.track_temperature}°C`} />
+                <WeatherCard label="AIR TEMP" value={`${latestWeather.air_temperature}°C`} />
+                <WeatherCard label="HUMIDITY" value={`${latestWeather.humidity}%`} />
+                <WeatherCard label="WIND" value={`${latestWeather.wind_speed} km/h`} />
+              </div>
+            ) : null}
+          </Link>
 
-          {/* Best Laps Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                <span className="flex items-center gap-2">
+          {/* Best Laps Table — links to /laps */}
+          <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+            <Link href="/laps" className="block">
+              <div className="bg-nb-primary text-white p-4 flex justify-between items-center hover:bg-nb-red transition-colors">
+                <h2 className="font-headline font-black text-lg uppercase tracking-tighter flex items-center gap-2">
                   <Timer size={16} />
                   TOP LAP TIMES
+                </h2>
+                <span className="flex items-center gap-1 text-[10px] font-bold uppercase">
+                  VIEW ALL <ArrowRight size={12} />
                 </span>
-              </CardTitle>
-              <Badge variant="yellow">LIVE</Badge>
-            </CardHeader>
+              </div>
+            </Link>
             {lapsLoading ? (
               <TableSkeleton rows={5} cols={5} />
             ) : (
@@ -219,7 +231,7 @@ export default function DashboardPage() {
                           className="border-b-2 border-nb-primary hover:bg-nb-yellow/10 transition-colors"
                         >
                           <td className="p-3 border-r-2 border-nb-primary">
-                            <span className={`font-black ${idx === 0 ? "text-nb-red" : ""}`}>
+                            <span className={`font-black ${idx === 0 ? "text-nb-red" : "text-nb-text"}`}>
                               {idx + 1}
                             </span>
                           </td>
@@ -229,7 +241,7 @@ export default function DashboardPage() {
                                 className="w-1 h-6"
                                 style={{ backgroundColor: `#${driver?.team_colour || "888"}` }}
                               />
-                              <span className="italic">
+                              <span className="italic text-nb-text">
                                 {driver?.name_acronym || `#${lap.driver_number}`}
                               </span>
                             </div>
@@ -237,7 +249,7 @@ export default function DashboardPage() {
                           <td className="p-3 border-r-2 border-nb-primary text-nb-text-muted text-xs">
                             {driver?.team_name || "--"}
                           </td>
-                          <td className="p-3 border-r-2 border-nb-primary font-black italic">
+                          <td className="p-3 border-r-2 border-nb-primary font-black italic text-nb-text">
                             {formatLapTime(lap.lap_duration)}
                           </td>
                           <td className="p-3 border-r-2 border-nb-primary text-nb-text-muted">
@@ -256,24 +268,21 @@ export default function DashboardPage() {
                 </table>
               </div>
             )}
-          </Card>
+          </div>
 
-          {/* Current Positions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                <span className="flex items-center gap-2">
+          {/* Current Positions — links to /positions */}
+          <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+            <Link href="/positions" className="block">
+              <div className="bg-nb-primary text-white p-4 flex justify-between items-center hover:bg-nb-blue transition-colors">
+                <h2 className="font-headline font-black text-lg uppercase tracking-tighter flex items-center gap-2">
                   <Users size={16} />
                   CURRENT POSITIONS
+                </h2>
+                <span className="flex items-center gap-1 text-[10px] font-bold uppercase">
+                  TRACK MAP <ArrowRight size={12} />
                 </span>
-              </CardTitle>
-              <Link
-                href="/positions"
-                className="bg-white text-nb-primary font-headline font-black text-[10px] px-3 py-1 border border-white hover:bg-nb-yellow transition-colors uppercase"
-              >
-                TRACK MAP
-              </Link>
-            </CardHeader>
+              </div>
+            </Link>
             {posLoading ? (
               <TableSkeleton rows={10} cols={4} />
             ) : (
@@ -299,7 +308,7 @@ export default function DashboardPage() {
                           className="border-b-2 border-nb-primary hover:bg-nb-yellow/10 transition-colors"
                         >
                           <td className="p-3 border-r-2 border-nb-primary">
-                            <span className={`font-black italic ${pos.position <= 3 ? "text-nb-red" : ""}`}>
+                            <span className={`font-black italic ${pos.position <= 3 ? "text-nb-red" : "text-nb-text"}`}>
                               P{pos.position}
                             </span>
                           </td>
@@ -309,13 +318,13 @@ export default function DashboardPage() {
                                 className="w-1 h-6"
                                 style={{ backgroundColor: `#${driver?.team_colour || "888"}` }}
                               />
-                              {driver?.name_acronym || `#${pos.driver_number}`}
+                              <span className="text-nb-text">{driver?.name_acronym || `#${pos.driver_number}`}</span>
                             </div>
                           </td>
                           <td className="p-3 border-r-2 border-nb-primary text-nb-text-muted text-xs">
                             {driver?.team_name || "--"}
                           </td>
-                          <td className="p-3 font-mono text-xs">
+                          <td className="p-3 font-mono text-xs text-nb-text">
                             {interval
                               ? formatInterval(interval.gap_to_leader)
                               : pos.position === 1
@@ -329,101 +338,107 @@ export default function DashboardPage() {
                 </table>
               </div>
             )}
-          </Card>
+          </div>
         </div>
 
         {/* Right Column */}
         <div className="lg:col-span-4 space-y-8">
-          {/* Race Control */}
-          <Card className="flex flex-col">
-            <CardHeader className="bg-nb-red">
-              <CardTitle>
-                <span className="flex items-center gap-2">
+          {/* Race Control — links to /race-control */}
+          <Link href="/race-control" className="block">
+            <div className="border-4 border-nb-primary bg-nb-surface neo-shadow flex flex-col">
+              <div className="bg-nb-red text-white p-4 flex justify-between items-center hover:bg-red-700 transition-colors">
+                <h2 className="font-headline font-black text-lg uppercase tracking-tighter flex items-center gap-2">
                   <ShieldAlert size={16} />
                   RACE CONTROL
+                </h2>
+                <span className="flex items-center gap-1 text-[10px] font-bold uppercase">
+                  ALL <ArrowRight size={12} />
                 </span>
-              </CardTitle>
-            </CardHeader>
-            <div className="flex-1 p-4 space-y-3 max-h-80 overflow-y-auto">
-              {raceControlEvents.length > 0 ? (
-                raceControlEvents
-                  .slice(-15)
-                  .reverse()
-                  .map((rc, idx) => (
-                    <div
-                      key={idx}
-                      className="border-2 border-nb-primary p-3 flex gap-3"
-                    >
-                      <div className="font-headline font-black text-sm min-w-[50px]">
-                        {rc.lap_number ? `L${rc.lap_number}` : "--"}
+              </div>
+              <div className="flex-1 p-4 space-y-3 max-h-80 overflow-y-auto">
+                {raceControlEvents.length > 0 ? (
+                  raceControlEvents
+                    .slice(-8)
+                    .reverse()
+                    .map((rc, idx) => (
+                      <div
+                        key={idx}
+                        className="border-2 border-nb-primary p-3 flex gap-3"
+                      >
+                        <div className="font-headline font-black text-sm text-nb-text min-w-[50px]">
+                          {rc.lap_number ? `L${rc.lap_number}` : "--"}
+                        </div>
+                        <div className="font-body text-xs">
+                          <span className="block font-headline font-black uppercase text-[10px] text-nb-red">
+                            {rc.flag || rc.category}
+                          </span>
+                          <span className="text-nb-text-muted">{rc.message}</span>
+                        </div>
                       </div>
-                      <div className="font-body text-xs font-bold">
-                        <span className="block font-headline font-black uppercase text-[10px] text-nb-red">
-                          {rc.flag || rc.category}
-                        </span>
-                        {rc.message}
-                      </div>
-                    </div>
-                  ))
-              ) : (
-                <p className="text-sm text-nb-text-muted font-headline font-bold uppercase">
-                  No race control events
-                </p>
-              )}
+                    ))
+                ) : (
+                  <p className="text-sm text-nb-text-muted font-headline font-bold uppercase">
+                    No race control events
+                  </p>
+                )}
+              </div>
             </div>
-          </Card>
+          </Link>
 
-          {/* Pit Stops */}
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                <span className="flex items-center gap-2">
+          {/* Pit Stops — links to /pit */}
+          <Link href="/pit" className="block">
+            <div className="border-4 border-nb-primary bg-nb-surface neo-shadow">
+              <div className="bg-nb-primary text-white p-4 flex justify-between items-center hover:bg-nb-blue transition-colors">
+                <h2 className="font-headline font-black text-lg uppercase tracking-tighter flex items-center gap-2">
                   <Wrench size={16} />
                   PIT STOPS
+                </h2>
+                <span className="flex items-center gap-1 text-[10px] font-bold uppercase">
+                  ALL <ArrowRight size={12} />
                 </span>
-              </CardTitle>
-            </CardHeader>
-            <div className="p-4 max-h-80 overflow-x-auto">
-              {pitStops.length > 0 ? (
-                <table className="w-full text-left border-collapse text-xs">
-                  <thead>
-                    <tr className="border-b-2 border-nb-primary font-headline font-black uppercase">
-                      <th className="p-2">DRIVER</th>
-                      <th className="p-2">LAP</th>
-                      <th className="p-2">LANE</th>
-                      <th className="p-2 text-right">STOP</th>
-                    </tr>
-                  </thead>
-                  <tbody className="font-headline font-bold">
-                    {pitStops.map((pit, idx) => {
-                      const driver = driverMap.get(pit.driver_number);
-                      return (
-                        <tr
-                          key={idx}
-                          className="border-b border-nb-primary/30 hover:bg-nb-yellow/10"
-                        >
-                          <td className="p-2 italic">
-                            {driver?.name_acronym || `#${pit.driver_number}`}
-                          </td>
-                          <td className="p-2">L{pit.lap_number}</td>
-                          <td className="p-2 font-mono text-nb-text-muted">
-                            {pit.lane_duration != null ? `${pit.lane_duration.toFixed(2)}s` : "--"}
-                          </td>
-                          <td className="p-2 font-mono text-right text-nb-red font-black">
-                            {pit.stop_duration != null ? `${pit.stop_duration.toFixed(2)}s` : "N/A"}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              ) : (
-                <p className="text-sm text-nb-text-muted font-headline font-bold uppercase">
-                  No pit stops recorded
-                </p>
-              )}
+              </div>
+              <div className="p-4 max-h-80 overflow-x-auto">
+                {pitStops.length > 0 ? (
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead>
+                      <tr className="border-b-2 border-nb-primary font-headline font-black uppercase">
+                        <th className="p-2 text-nb-text">DRIVER</th>
+                        <th className="p-2 text-nb-text">LAP</th>
+                        <th className="p-2 text-nb-text">LANE</th>
+                        <th className="p-2 text-nb-text text-right">STOP</th>
+                      </tr>
+                    </thead>
+                    <tbody className="font-headline font-bold">
+                      {pitStops.slice(0, 8).map((pit, idx) => {
+                        const driver = driverMap.get(pit.driver_number);
+                        return (
+                          <tr
+                            key={idx}
+                            className="border-b border-nb-primary/30 hover:bg-nb-yellow/10"
+                          >
+                            <td className="p-2 italic text-nb-text">
+                              {driver?.name_acronym || `#${pit.driver_number}`}
+                            </td>
+                            <td className="p-2 text-nb-text">L{pit.lap_number}</td>
+                            <td className="p-2 font-mono text-nb-text-muted">
+                              {pit.lane_duration != null ? `${pit.lane_duration.toFixed(2)}s` : "--"}
+                            </td>
+                            <td className="p-2 font-mono text-right text-nb-red font-black">
+                              {pit.stop_duration != null ? `${pit.stop_duration.toFixed(2)}s` : "N/A"}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p className="text-sm text-nb-text-muted font-headline font-bold uppercase">
+                    No pit stops recorded
+                  </p>
+                )}
+              </div>
             </div>
-          </Card>
+          </Link>
         </div>
       </div>
     </div>
@@ -442,15 +457,17 @@ function StatCard({
   icon?: React.ReactNode;
 }) {
   return (
-    <div className="bg-nb-surface border-4 border-nb-primary p-4 neo-shadow-sm flex flex-col justify-between h-28">
-      <span className="text-[10px] font-black uppercase tracking-widest font-headline flex items-center gap-1">
+    <div className="bg-nb-surface border-4 border-nb-primary p-4 neo-shadow-sm flex flex-col justify-between h-28 hover:bg-nb-yellow/10 transition-colors cursor-pointer group">
+      <span className="text-[10px] font-black uppercase tracking-widest font-headline flex items-center gap-1 text-nb-text">
         {icon}
         {label}
       </span>
       {loading ? (
         <Skeleton className="h-8 w-12" />
       ) : (
-        <span className="font-headline font-black text-3xl">{value}</span>
+        <span className="font-headline font-black text-3xl text-nb-text group-hover:text-nb-red transition-colors">
+          {value}
+        </span>
       )}
     </div>
   );
@@ -458,11 +475,11 @@ function StatCard({
 
 function WeatherCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-nb-surface border-4 border-nb-primary p-4 neo-shadow-sm flex flex-col justify-between h-24">
+    <div className="bg-nb-surface border-4 border-nb-primary p-4 neo-shadow-sm flex flex-col justify-between h-24 hover:bg-nb-yellow/10 transition-colors cursor-pointer">
       <span className="text-[10px] font-black uppercase tracking-widest font-headline text-nb-text-muted">
         {label}
       </span>
-      <span className="font-headline font-black text-2xl">{value}</span>
+      <span className="font-headline font-black text-2xl text-nb-text">{value}</span>
     </div>
   );
 }

@@ -54,7 +54,7 @@ export function Sidebar() {
       {/* Mobile hamburger */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="fixed left-4 top-20 z-50 flex h-10 w-10 items-center justify-center border-2 border-nb-primary bg-nb-surface text-nb-text shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] md:hidden hover:bg-nb-yellow transition-colors"
+        className="fixed left-4 top-4 z-50 flex h-10 w-10 items-center justify-center border-2 border-nb-primary bg-nb-surface text-nb-text shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] md:hidden hover:bg-nb-yellow transition-colors"
         aria-label="Open menu"
       >
         <Menu size={18} />
@@ -76,18 +76,8 @@ export function Sidebar() {
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
-        {/* Header */}
-        <div className="px-4 mb-6">
-          <div className="text-xl font-black border-b-2 border-nb-primary mb-1 font-headline uppercase tracking-tight">
-            GRAND PRIX
-          </div>
-          <div className="text-[10px] font-bold uppercase tracking-widest text-nb-red">
-            LIVE TELEMETRY
-          </div>
-        </div>
-
         {/* Nav links */}
-        <nav className="flex-1 flex flex-col font-headline font-bold text-sm uppercase">
+        <nav className="flex-1 flex flex-col font-headline font-bold text-sm uppercase pt-4">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -112,7 +102,7 @@ export function Sidebar() {
         {/* Mobile close */}
         <button
           onClick={closeMobile}
-          className="absolute top-[80px] right-3 rounded p-1.5 text-nb-text hover:bg-nb-primary hover:text-white md:hidden"
+          className="absolute top-4 right-3 rounded p-1.5 text-nb-text hover:bg-nb-primary hover:text-white md:hidden"
         >
           <X size={16} />
         </button>
