@@ -5,6 +5,7 @@ import { f1Api } from "@/lib/api/f1";
 import { useSession } from "@/components/dashboard/SessionSelector";
 import { SessionSelector } from "@/components/dashboard/SessionSelector";
 import { TableSkeleton, Skeleton } from "@/components/ui/Skeleton";
+import { ClientOnly } from "@/components/ui/ClientOnly";
 import { CloudSun, Droplets, Thermometer, Wind, Gauge } from "lucide-react";
 import { useMemo } from "react";
 import {
@@ -78,8 +79,9 @@ export default function WeatherPage() {
         {isLoading ? (
           <Skeleton className="h-64 w-full" />
         ) : (
-          <div className="h-72 w-full p-4">
-            <ResponsiveContainer width="100%" height="100%">
+          <div style={{ height: 288, width: "100%" }} className="p-4">
+            <ClientOnly fallback={<Skeleton className="h-full w-full" />}>
+              <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a" />
                 <XAxis dataKey="time" tick={{ fill: "#4a4a4a", fontSize: 10 }} />
@@ -98,6 +100,7 @@ export default function WeatherPage() {
                 <Line type="monotone" dataKey="air" stroke="#0055ff" strokeWidth={2} dot={false} name="Air (°C)" />
               </LineChart>
             </ResponsiveContainer>
+            </ClientOnly>
           </div>
         )}
       </div>
@@ -107,8 +110,9 @@ export default function WeatherPage() {
         <div className="bg-nb-primary text-white p-4">
           <h2 className="font-headline font-black uppercase text-sm tracking-tighter">Humidity & Wind</h2>
         </div>
-        <div className="h-64 w-full p-4">
-          <ResponsiveContainer width="100%" height="100%">
+        <div style={{ height: 256, width: "100%" }} className="p-4">
+          <ClientOnly fallback={<Skeleton className="h-full w-full" />}>
+            <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a" />
               <XAxis dataKey="time" tick={{ fill: "#4a4a4a", fontSize: 10 }} />
@@ -127,6 +131,7 @@ export default function WeatherPage() {
               <Line type="monotone" dataKey="wind" stroke="#4a4a4a" strokeWidth={2} dot={false} name="Wind (m/s)" />
             </LineChart>
           </ResponsiveContainer>
+          </ClientOnly>
         </div>
       </div>
 

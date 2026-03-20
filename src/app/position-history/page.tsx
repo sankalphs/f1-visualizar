@@ -5,6 +5,7 @@ import { f1Api } from "@/lib/api/f1";
 import { useSession } from "@/components/dashboard/SessionSelector";
 import { SessionSelector } from "@/components/dashboard/SessionSelector";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { ClientOnly } from "@/components/ui/ClientOnly";
 import { TrendingUp } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
@@ -209,7 +210,8 @@ export default function PositionHistoryPage() {
             Position Over Session Duration
           </div>
           <div style={{ height: 500, width: "100%" }} className="p-4">
-            <ResponsiveContainer width="100%" height="100%" minHeight={400}>
+            <ClientOnly fallback={<Skeleton className="h-full w-full" />}>
+              <ResponsiveContainer width="100%" height="100%" minHeight={400}>
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
                 <XAxis
@@ -263,6 +265,7 @@ export default function PositionHistoryPage() {
                 ))}
               </LineChart>
             </ResponsiveContainer>
+            </ClientOnly>
           </div>
         </div>
       ) : (

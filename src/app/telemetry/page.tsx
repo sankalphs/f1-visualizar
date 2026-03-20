@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { f1Api } from "@/lib/api/f1";
 import { useSession } from "@/components/dashboard/SessionSelector";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { ClientOnly } from "@/components/ui/ClientOnly";
 import { useMemo, useState } from "react";
 import {
   AreaChart,
@@ -229,7 +230,8 @@ function TelemetryChart({
         </h3>
       </div>
       <div className={`telemetry-grid relative overflow-hidden border-b-2 border-zinc-700`} style={{ height: small ? 128 : 256, width: "100%" }}>
-        <ResponsiveContainer width="100%" height="100%" minHeight={small ? 100 : 200}>
+        <ClientOnly fallback={<Skeleton className="h-full w-full" />}>
+          <ResponsiveContainer width="100%" height="100%" minHeight={small ? 100 : 200}>
           {isStep ? (
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#333" />
@@ -283,6 +285,7 @@ function TelemetryChart({
             </AreaChart>
           )}
         </ResponsiveContainer>
+        </ClientOnly>
       </div>
     </div>
   );
