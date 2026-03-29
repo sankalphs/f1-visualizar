@@ -29,13 +29,13 @@ export default function DashboardPage() {
   const { data: laps = [], isLoading: lapsLoading } = useQuery({
     queryKey: ["laps", sessionKey],
     queryFn: () => f1Api.laps.list({ session_key: sessionKey }),
-    refetchInterval: 30_000,
+    refetchInterval: 60_000,
   });
 
   const { data: positions = [], isLoading: posLoading } = useQuery({
     queryKey: ["positions", sessionKey],
     queryFn: () => f1Api.position.list({ session_key: sessionKey }),
-    refetchInterval: 30_000,
+    refetchInterval: 60_000,
   });
 
   const { data: weather = [], isLoading: weatherLoading } = useQuery({
@@ -61,7 +61,7 @@ export default function DashboardPage() {
   const { data: intervals = [] } = useQuery({
     queryKey: ["intervals", sessionKey],
     queryFn: () => f1Api.intervals.bySession(sessionKey),
-    refetchInterval: 30_000,
+    refetchInterval: 60_000,
   });
 
   const latestWeather = weather.length > 0 ? weather[weather.length - 1] : null;

@@ -22,7 +22,7 @@ export function TopNav() {
   const { data: positions = [] } = useQuery({
     queryKey: ["positions", sessionKey],
     queryFn: () => f1Api.position.list({ session_key: sessionKey }),
-    refetchInterval: 30_000,
+    refetchInterval: 60_000,
   });
 
   const latestDate = useMemo(() => {

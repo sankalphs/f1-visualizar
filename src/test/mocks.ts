@@ -85,6 +85,26 @@ const mockWeather = {
 };
 
 export const handlers = [
+  http.get("/api/f1", ({ request }) => {
+    const url = new URL(request.url);
+    const endpoint = url.searchParams.get("endpoint");
+
+    switch (endpoint) {
+      case "meetings":
+        return HttpResponse.json([mockMeeting]);
+      case "sessions":
+        return HttpResponse.json([mockSession]);
+      case "drivers":
+        return HttpResponse.json([mockDriver]);
+      case "laps":
+        return HttpResponse.json([mockLap]);
+      case "weather":
+        return HttpResponse.json([mockWeather]);
+      default:
+        return HttpResponse.json([]);
+    }
+  }),
+  // Also handle direct API calls (for backward compat)
   http.get("https://api.openf1.org/v1/meetings", () => {
     return HttpResponse.json([mockMeeting]);
   }),

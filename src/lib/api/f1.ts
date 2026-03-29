@@ -19,12 +19,14 @@ import type {
   ChampionshipTeam,
 } from "@/lib/types/f1";
 
-const BASE_URL = "https://api.openf1.org/v1";
+// Use our proxy route to avoid rate limiting
+const BASE_URL = "/api/f1";
 
 type QueryParams = Record<string, string | number | boolean | undefined>;
 
 function buildUrl(endpoint: string, params?: QueryParams): string {
-  const url = new URL(`${BASE_URL}/${endpoint}`);
+  const url = new URL(`${BASE_URL}`, window.location.origin);
+  url.searchParams.append("endpoint", endpoint);
   if (params) {
     for (const [key, value] of Object.entries(params)) {
       if (value !== undefined) {
@@ -38,7 +40,7 @@ function buildUrl(endpoint: string, params?: QueryParams): string {
 async function fetchApi<T>(endpoint: string, params?: QueryParams): Promise<T> {
   const url = buildUrl(endpoint, params);
   const response = await fetch(url, {
-    next: { revalidate: 30 },
+    headers: { Accept: "application/json" },
   });
   if (!response.ok) {
     throw new Error(`API Error: ${response.status} ${response.statusText}`);
@@ -69,12 +71,6 @@ export const f1Api = {
       fetchApi<CarData[]>("car_data", {
         session_key: sessionKey,
         driver_number: driverNumber,
-      }),
-    withSpeed: (sessionKey: number | string, driverNumber: number, minSpeed: number) =>
-      fetchApi<CarData[]>("car_data", {
-        session_key: sessionKey,
-        driver_number: driverNumber,
-        [`speed>=`]: minSpeed,
       }),
   },
 
@@ -110,6 +106,8 @@ export const f1Api = {
 
   stints: {
     list: (params?: QueryParams) => fetchApi<Stint[]>("stints", params),
+    bySession: (sessionKey: number | string) =>
+      fetchApi<Stint[]>("stints", { session_key: sessionKey }),
     byDriver: (sessionKey: number | string, driverNumber: number) =>
       fetchApi<Stint[]>("stints", {
         session_key: sessionKey,
@@ -139,19 +137,23 @@ export const f1Api = {
   },
 
   sessionResult: {
-    list: (params?: QueryParams) => fetchApi<SessionResult[]>("session_result", params),
+    list: (params?: QueryParams) =>
+      fetchApi<SessionResult[]>("session_result", params),
     bySession: (sessionKey: number | string) =>
       fetchApi<SessionResult[]>("session_result", { session_key: sessionKey }),
   },
 
   startingGrid: {
-    list: (params?: QueryParams) => fetchApi<StartingGrid[]>("starting_grid", params),
+    list: (params?: QueryParams) =>
+      fetchApi<StartingGrid[]>("starting_grid", params),
     bySession: (sessionKey: number | string) =>
       fetchApi<StartingGrid[]>("starting_grid", { session_key: sessionKey }),
   },
 
   teamRadio: {
     list: (params?: QueryParams) => fetchApi<TeamRadio[]>("team_radio", params),
+    bySession: (sessionKey: number | string) =>
+      fetchApi<TeamRadio[]>("team_radio", { session_key: sessionKey }),
     byDriver: (sessionKey: number | string, driverNumber: number) =>
       fetchApi<TeamRadio[]>("team_radio", {
         session_key: sessionKey,
